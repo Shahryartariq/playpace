@@ -24,7 +24,7 @@
 The browser sends the link to `/api/playlist`, which reads the list with the YouTube Data API v3 and streams newline-delimited JSON back: the list's details first, then progress while videos load, then every video with its length. A 5,000-video playlist takes about 20 seconds the first time and shows live progress.
 
 - **Quota-friendly.** One request per 50 videos for the list and one per 50 for durations (about 200 quota units for a 5,000-video playlist). Finished lists are kept for two hours in Vercel's Runtime Cache, and two people asking for the same list at once share one set of requests.
-- **Protected.** Uncached lookups are rate-limited per address, so scripts can't burn the daily quota. The API key never leaves the server.
+- **Protected.** Fresh lookups are charged by their estimated quota cost: each address gets 600 units per 10 minutes and each server instance 9,000 units a day, so scripts can't burn the daily quota. Responses ask YouTube only for the fields Playpace uses. The API key never leaves the server.
 - **Everything else runs in the browser**: speeds, ranges, the plan, the watched list and exports.
 
 ## Stack
@@ -81,8 +81,8 @@ npm run check      # ESLint, TypeScript, unit tests
 npm run test:e2e   # builds the site and runs Playwright on desktop and mobile
 ```
 
-- **100 unit tests** (Vitest): link parsing for every YouTube URL shape, the YouTube client against a fake API (paging, order, private/deleted/live videos, the 5,000 limit, error mapping), totals, ranges, the day planner, formatting in several languages, CSV and calendar exports, share links, and a check that all 12 translations match the English keys and placeholders.
-- **84 end-to-end runs** (Playwright, 42 tests on desktop and mobile): every calculator feature, shared links, watched list persistence, downloads, error messages, theme, Urdu RTL, axe accessibility in light and dark mode, metadata and hreflang, sitemap, share images, redirects and 404s, CSP headers and nonces.
+- **114 unit tests** (Vitest): link parsing for every YouTube URL shape, the YouTube client against a fake API (paging, order, private/deleted/live videos, the 5,000 limit, error mapping, stopping on the first failure, retries), the quota-based rate limit and shared lookups, totals, ranges, the day planner, formatting in several languages, CSV and calendar exports, share links, and a check that all 12 translations match the English keys and placeholders.
+- **85 end-to-end runs** (Playwright, 43 tests on desktop and mobile): every calculator feature, shared links, watched list persistence, downloads, error messages, theme, Urdu RTL, axe accessibility in light and dark mode, metadata and hreflang, sitemap, share images, redirects and 404s, CSP headers and nonces.
 
 ## Project structure
 

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { defaultLocale, splitLocale } from './i18n/config';
+import { defaultLocale, isLocale, splitLocale } from './i18n/config';
 
 const GA_ID = /^G-[A-Z0-9]{4,16}$/;
 
@@ -36,6 +36,15 @@ function contentSecurityPolicy(nonce: string, dev: boolean): string {
  */
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  // /ES, /Ur/privacy → /es, /ur/privacy
+  const first = pathname.split('/')[1] ?? '';
+  if (first && first !== first.toLowerCase() && isLocale(first.toLowerCase())) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${first.toLowerCase()}${pathname.slice(first.length + 1)}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   const { locale, rest, explicit } = splitLocale(pathname);
 
   if (explicit && locale === defaultLocale) {

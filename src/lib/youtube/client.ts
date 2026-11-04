@@ -20,6 +20,34 @@ export interface FetchOptions {
   onProgress?: (loaded: number, total: number) => void;
   /** How many videos.list requests may run at once. */
   concurrency?: number;
+  /** Called once the list's size is known; return false to stop before reading its videos (rate limit). */
+  allowItems?: (meta: ListMeta) => boolean;
+}
+
+/** Only the fields Playpace uses, so 5,000-video lists don't download every description. */
+const FIELDS = {
+  playlists: 'items(id,snippet(title,channelTitle,thumbnails(default/url,medium/url,high/url)),contentDetails/itemCount)',
+  channels: 'items(id,snippet(title,thumbnails(default/url,medium/url,high/url)),contentDetails/relatedPlaylists/uploads)',
+  playlistItems: 'nextPageToken,items/snippet(title,videoOwnerChannelTitle,resourceId/videoId)',
+  videos: 'items(id,snippet(title,channelTitle,liveBroadcastContent,thumbnails(default/url,medium/url,high/url)),contentDetails/duration)',
+} as const;
+
+/** Reasons that mean the API key itself is wrong, blocked or restricted. */
+const KEY_PROBLEMS = new Set([
+  'keyInvalid',
+  'keyExpired',
+  'accessNotConfigured',
+  'ipRefererBlocked',
+  'API_KEY_INVALID',
+  'API_KEY_HTTP_REFERRER_BLOCKED',
+  'API_KEY_IP_ADDRESS_BLOCKED',
+  'API_KEY_SERVICE_BLOCKED',
+  'SERVICE_DISABLED',
+]);
+
+/** Estimated quota units for reading a list of this size: one playlistItems and one videos call per 50. */
+export function estimateUnits(itemCount: number): number {
+  return 2 + Math.ceil(Math.min(Math.max(itemCount, 1), MAX_ITEMS) / PAGE) * 2;
 }
 
 interface Thumbs {
@@ -65,10 +93,11 @@ function pickThumb(t?: Thumbs): string | undefined {
   return t?.medium?.url ?? t?.high?.url ?? t?.default?.url;
 }
 
-async function call<T>(path: string, params: Record<string, string>, opts: FetchOptions): Promise<T> {
+async function call<T>(path: keyof typeof FIELDS, params: Record<string, string>, opts: FetchOptions, attempt = 0): Promise<T> {
   const doFetch = opts.fetch ?? fetch;
   const url = new URL(`${API}/${path}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  url.searchParams.set('fields', FIELDS[path]);
   url.searchParams.set('key', opts.apiKey);
 
   let res: Response;
@@ -76,28 +105,40 @@ async function call<T>(path: string, params: Record<string, string>, opts: Fetch
     res = await doFetch(url, { signal: opts.signal, headers: { accept: 'application/json' }, cache: 'no-store' });
   } catch (err) {
     if ((err as Error)?.name === 'AbortError') throw err;
+    if (attempt === 0) return call<T>(path, params, opts, 1);
     throw new YouTubeError('upstream', 'network error');
   }
   if (res.ok) return (await res.json()) as T;
 
   let reason = '';
+  let detail = '';
   try {
-    const body = (await res.json()) as { error?: { errors?: { reason?: string }[] } };
+    const body = (await res.json()) as {
+      error?: { errors?: { reason?: string }[]; details?: { reason?: string }[] };
+    };
     reason = body.error?.errors?.[0]?.reason ?? '';
+    detail = body.error?.details?.find((d) => d.reason)?.reason ?? '';
   } catch {
     // ignore unreadable bodies
   }
-  if (res.status === 404 || reason === 'playlistNotFound' || reason === 'channelNotFound' || reason === 'videoNotFound') {
-    throw new YouTubeError('not_found', reason);
+  if (KEY_PROBLEMS.has(reason) || KEY_PROBLEMS.has(detail)) {
+    throw new YouTubeError('config', `${path}: ${reason} ${detail}`.trim());
   }
   if (reason === 'quotaExceeded' || reason === 'dailyLimitExceeded' || reason === 'rateLimitExceeded') {
     throw new YouTubeError('quota', reason);
   }
-  if (reason === 'playlistItemsNotAccessible' || reason === 'forbidden') throw new YouTubeError('not_found', reason);
-  if (reason === 'keyInvalid' || reason === 'accessNotConfigured' || (res.status === 400 && reason === 'badRequest')) {
-    throw new YouTubeError('config', reason);
+  if (res.status === 404 || reason === 'playlistNotFound' || reason === 'channelNotFound' || reason === 'videoNotFound') {
+    throw new YouTubeError('not_found', reason);
   }
-  throw new YouTubeError('upstream', `HTTP ${res.status} ${reason}`);
+  // A private playlist's items answer 403 forbidden; elsewhere a 403 means the key isn't allowed.
+  if (reason === 'playlistItemsNotAccessible' || (reason === 'forbidden' && path === 'playlistItems')) {
+    throw new YouTubeError('not_found', reason);
+  }
+  if (res.status === 403 || (res.status === 400 && reason === 'badRequest')) {
+    throw new YouTubeError('config', `${path}: HTTP ${res.status} ${reason} ${detail}`.trim());
+  }
+  if (res.status >= 500 && attempt === 0) return call<T>(path, params, opts, 1);
+  throw new YouTubeError('upstream', `${path}: HTTP ${res.status} ${reason}`);
 }
 
 async function fetchDurations(ids: string[], opts: FetchOptions): Promise<Map<string, VideoResource>> {
@@ -152,6 +193,12 @@ async function resolveChannel(
 }
 
 async function fetchItems(playlistId: string, meta: ListMeta, opts: FetchOptions): Promise<{ videos: Video[]; truncated: boolean }> {
+  // Stop everything on the first failure (or when the caller aborts) instead of reading on and spending quota.
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  opts.signal?.addEventListener('abort', onAbort);
+  const inner: FetchOptions = { ...opts, signal: controller.signal };
+
   const videos: Video[] = [];
   const pending: Promise<void>[] = [];
   const limit = Math.max(1, opts.concurrency ?? 4);
@@ -161,7 +208,12 @@ async function fetchItems(playlistId: string, meta: ListMeta, opts: FetchOptions
   let loaded = 0;
   let pageToken: string | undefined;
   let truncated = false;
+  let failure: unknown = null;
 
+  const fail = (err: unknown) => {
+    failure ??= err;
+    controller.abort();
+  };
   const acquire = async () => {
     if (running < limit) {
       running += 1;
@@ -175,51 +227,68 @@ async function fetchItems(playlistId: string, meta: ListMeta, opts: FetchOptions
     waiters.shift()?.();
   };
 
-  do {
-    const page = await call<ListResponse<PlaylistItemResource>>(
-      'playlistItems',
-      { part: 'snippet', playlistId, maxResults: String(PAGE), ...(pageToken ? { pageToken } : {}) },
-      opts,
-    );
-    const items = (page.items ?? [])
-      .map((item) => ({
-        id: item.snippet?.resourceId?.videoId ?? '',
-        title: item.snippet?.title ?? '',
-        owner: item.snippet?.videoOwnerChannelTitle,
-      }))
-      .filter((item) => item.id);
+  try {
+    do {
+      if (failure) break;
+      const page = await call<ListResponse<PlaylistItemResource>>(
+        'playlistItems',
+        { part: 'snippet', playlistId, maxResults: String(PAGE), ...(pageToken ? { pageToken } : {}) },
+        inner,
+      );
+      const items = (page.items ?? [])
+        .map((item) => ({
+          id: item.snippet?.resourceId?.videoId ?? '',
+          title: item.snippet?.title ?? '',
+          owner: item.snippet?.videoOwnerChannelTitle,
+        }))
+        .filter((item) => item.id);
 
-    const start = videos.length;
-    const room = MAX_ITEMS - start;
-    const slice = items.slice(0, room);
-    if (items.length > room) truncated = true;
-    // Reserve positions so the order matches the playlist even though duration lookups finish out of order.
-    videos.push(...slice.map((item) => ({ id: item.id, t: item.title, d: 0 }) as Video));
+      const start = videos.length;
+      const room = MAX_ITEMS - start;
+      const slice = items.slice(0, room);
+      if (items.length > room) truncated = true;
+      // Reserve positions so the order matches the playlist even though duration lookups finish out of order.
+      videos.push(...slice.map((item) => ({ id: item.id, t: item.title, d: 0 }) as Video));
 
-    await acquire();
-    pending.push(
-      fetchDurations(
-        slice.map((item) => item.id),
-        opts,
-      )
-        .then((found) => {
-          slice.forEach((item, i) => {
-            videos[start + i] = toVideo(item.id, item.title, item.owner, found.get(item.id));
-          });
-          loaded += slice.length;
-          opts.onProgress?.(loaded, Math.max(total, loaded));
-        })
-        .finally(release),
-    );
+      await acquire();
+      if (failure) {
+        release();
+        break;
+      }
+      pending.push(
+        fetchDurations(
+          slice.map((item) => item.id),
+          inner,
+        )
+          .then((found) => {
+            slice.forEach((item, i) => {
+              videos[start + i] = toVideo(item.id, item.title, item.owner, found.get(item.id));
+            });
+            loaded += slice.length;
+            opts.onProgress?.(loaded, Math.max(total, loaded));
+          })
+          .catch(fail)
+          .finally(release),
+      );
 
-    pageToken = page.nextPageToken;
-    if (videos.length >= MAX_ITEMS) {
-      if (pageToken) truncated = true;
-      break;
-    }
-  } while (pageToken);
+      pageToken = page.nextPageToken;
+      if (videos.length >= MAX_ITEMS) {
+        if (pageToken) truncated = true;
+        break;
+      }
+    } while (pageToken);
+  } catch (err) {
+    fail(err);
+  } finally {
+    await Promise.all(pending);
+    opts.signal?.removeEventListener('abort', onAbort);
+  }
 
-  await Promise.all(pending);
+  if (failure) {
+    // The caller's own abort wins over the AbortErrors it caused in sibling requests.
+    if (opts.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    throw failure;
+  }
   return { videos, truncated };
 }
 
@@ -290,6 +359,7 @@ export async function fetchSource(source: Source, opts: FetchOptions): Promise<L
     };
   }
 
+  if (opts.allowItems && !opts.allowItems(meta)) throw new YouTubeError('rate_limited', 'list too large for remaining budget');
   opts.onMeta?.(meta);
   const { videos, truncated } = await fetchItems(playlistId, meta, opts);
   return { meta, videos, truncated, fetchedAt: Date.now() };

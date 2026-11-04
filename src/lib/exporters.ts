@@ -2,7 +2,9 @@ import { atSpeed, type Item, type PlanDay } from './calc';
 import { formatClock } from './format';
 
 function escapeCsv(value: string): string {
-  return /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  // Titles come from strangers: stop spreadsheets from running "=…", "+…", "-…", "@…" as formulas.
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 
 export interface CsvLabels {
@@ -92,9 +94,8 @@ export interface IcsDay {
 /** One all-day calendar event per study day. */
 export function buildIcs(days: IcsDay[], calendarName: string, url: string, now = new Date()): string {
   const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const seed = Math.abs(
-    [...`${calendarName}${days.length}${stamp}`].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) | 0, 7),
-  ).toString(36);
+  // Stable ids, so importing the same plan again updates its events instead of duplicating them.
+  const seed = Math.abs([...`${calendarName}|${url}`].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) | 0, 7)).toString(36);
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -108,7 +109,7 @@ export function buildIcs(days: IcsDay[], calendarName: string, url: string, now 
     end.setDate(end.getDate() + 1);
     lines.push(
       'BEGIN:VEVENT',
-      `UID:playpace-${seed}-${day.index}@playpace.vercel.app`,
+      `UID:playpace-${seed}-${ymd(day.date)}-${day.index}@playpace.vercel.app`,
       `DTSTAMP:${stamp}`,
       `DTSTART;VALUE=DATE:${ymd(day.date)}`,
       `DTEND;VALUE=DATE:${ymd(end)}`,

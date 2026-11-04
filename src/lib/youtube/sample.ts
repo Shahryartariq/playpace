@@ -146,12 +146,16 @@ function sampleData(source: Source): ListData {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Same contract as fetchSource, served from fixtures with a small delay so progress is visible. */
-export async function fetchSample(source: Source, opts: Pick<FetchOptions, 'onMeta' | 'onProgress' | 'signal'>): Promise<ListData> {
+export async function fetchSample(
+  source: Source,
+  opts: Pick<FetchOptions, 'onMeta' | 'onProgress' | 'signal' | 'allowItems'>,
+): Promise<ListData> {
   const id = source.kind === 'playlist' ? source.id : '';
   if (id.includes('NotFound')) throw new YouTubeError('not_found');
   if (id.includes('Quota')) throw new YouTubeError('quota');
 
   const data = sampleData(source);
+  if (data.meta.kind !== 'video' && opts.allowItems && !opts.allowItems(data.meta)) throw new YouTubeError('rate_limited');
   opts.onMeta?.(data.meta);
   const total = data.videos.length;
   for (let loaded = 50; loaded < total; loaded += 50) {

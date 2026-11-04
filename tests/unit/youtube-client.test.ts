@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { estimateSeconds, fetchSource, YouTubeError } from '@/lib/youtube/client';
+import { estimateSeconds, estimateUnits, fetchSource, YouTubeError } from '@/lib/youtube/client';
 import { MAX_ITEMS } from '@/lib/youtube/types';
 
 type Handler = (url: URL) => { status?: number; body: unknown };
@@ -138,6 +138,78 @@ describe('fetchSource', () => {
     const err = await fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch }).catch((e) => e);
     expect(err).toBeInstanceOf(YouTubeError);
     expect(err.code).toBe('not_found');
+  });
+
+  it('asks only for the fields it uses', async () => {
+    const { fetch, calls } = mockFetch(fakeYouTube(5));
+    await fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch });
+    expect(calls.every((u) => u.searchParams.get('fields'))).toBe(true);
+    expect(calls.find((u) => u.pathname.endsWith('/videos'))?.searchParams.get('fields')).toContain('contentDetails/duration');
+  });
+
+  it('stops reading pages after the first failed duration lookup', async () => {
+    let videoCalls = 0;
+    const base = fakeYouTube(500);
+    const { fetch, calls } = mockFetch((url) => {
+      if (url.pathname.endsWith('/videos') && ++videoCalls === 2) {
+        return { status: 403, body: { error: { errors: [{ reason: 'quotaExceeded' }] } } };
+      }
+      return base(url);
+    });
+    const unhandled: unknown[] = [];
+    const onUnhandled = (e: unknown) => unhandled.push(e);
+    process.on('unhandledRejection', onUnhandled);
+    await expect(
+      fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch, concurrency: 1 }),
+    ).rejects.toMatchObject({ code: 'quota' });
+    await new Promise((r) => setTimeout(r, 10));
+    process.off('unhandledRejection', onUnhandled);
+    expect(unhandled).toEqual([]);
+    expect(calls.filter((u) => u.pathname.endsWith('/playlistItems')).length).toBeLessThan(5);
+  });
+
+  it('reports a blocked or restricted key as a setup problem', async () => {
+    const { fetch } = mockFetch(() => ({
+      status: 403,
+      body: { error: { errors: [{ reason: 'forbidden' }], details: [{ reason: 'API_KEY_HTTP_REFERRER_BLOCKED' }] } },
+    }));
+    await expect(fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch })).rejects.toMatchObject({
+      code: 'config',
+    });
+  });
+
+  it('treats a private playlist (403 on its items) as not found', async () => {
+    const base = fakeYouTube(10);
+    const { fetch } = mockFetch((url) =>
+      url.pathname.endsWith('/playlistItems') ? { status: 403, body: { error: { errors: [{ reason: 'forbidden' }] } } } : base(url),
+    );
+    await expect(fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch })).rejects.toMatchObject({
+      code: 'not_found',
+    });
+  });
+
+  it('retries once when YouTube has a server error', async () => {
+    let first = true;
+    const base = fakeYouTube(3);
+    const { fetch } = mockFetch((url) => {
+      if (first) {
+        first = false;
+        return { status: 503, body: { error: { errors: [{ reason: 'backendError' }] } } };
+      }
+      return base(url);
+    });
+    const data = await fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch });
+    expect(data.videos).toHaveLength(3);
+  });
+
+  it('can refuse a list that is too big before reading its videos', async () => {
+    const { fetch, calls } = mockFetch(fakeYouTube(3000));
+    await expect(
+      fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch, allowItems: (m) => estimateUnits(m.itemCount) < 50 }),
+    ).rejects.toMatchObject({ code: 'rate_limited' });
+    expect(calls).toHaveLength(1);
+    expect(estimateUnits(5000)).toBe(202);
+    expect(estimateUnits(10)).toBe(4);
   });
 
   it('estimates fetch time from the item count', () => {

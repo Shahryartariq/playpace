@@ -92,6 +92,28 @@ describe('exports', () => {
     expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
   });
 
+  it('stops spreadsheets from running titles as formulas', () => {
+    const evil = combine([
+      {
+        meta: { token: 'p:y', kind: 'playlist', id: 'y', title: 'y', channel: 'c', itemCount: 1, url: '' },
+        videos: [{ id: 'ccccccccccc', t: '=HYPERLINK("http://x","click")', c: '@chan', d: 60 }],
+        truncated: false,
+        fetchedAt: 0,
+      },
+    ]);
+    const csv = buildCsv(evil, 1, new Set(), labels);
+    expect(csv).toContain(`"'=HYPERLINK(""http://x"",""click"")",'@chan,`);
+  });
+
+  it('gives calendar events stable ids', () => {
+    const days = planDays(items, { minutesPerDay: 30, speed: 1, start: new Date(2026, 10, 2) });
+    const entries = days.map((day) => ({ day, summary: 's', description: 'd' }));
+    const a = buildIcs(entries, 'Plan', 'https://x/?q=1', new Date(1));
+    const b = buildIcs(entries, 'Plan', 'https://x/?q=1', new Date(999999999));
+    const uids = (t: string) => t.match(/^UID:.*$/gm);
+    expect(uids(a)).toEqual(uids(b));
+  });
+
   it('makes safe file names', () => {
     expect(fileSlug('Full-stack: Web Dev / 2026!')).toBe('full-stack-web-dev-2026');
     expect(fileSlug('دورة البرمجة')).toBe('دورة-البرمجة');

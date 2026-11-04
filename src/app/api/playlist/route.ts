@@ -2,12 +2,12 @@ import { YouTubeError } from '@/lib/youtube/client';
 import { parseToken } from '@/lib/youtube/parse-input';
 import type { ErrorCode, StreamEvent } from '@/lib/youtube/types';
 import { loadList } from '@/lib/server/lists';
-import { clientIp, takeToken } from '@/lib/server/rate-limit';
+import { chargeUnits, clientIp } from '@/lib/server/rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 /** A 5,000-video playlist takes about 20 seconds the first time. */
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const STATUS: Record<ErrorCode, number> = {
   invalid_input: 400,
@@ -41,12 +41,11 @@ export async function GET(request: Request): Promise<Response> {
 
   const ip = clientIp(request.headers);
   const encoder = new TextEncoder();
-  const abort = new AbortController();
-  request.signal.addEventListener('abort', () => abort.abort());
+  // If the viewer leaves, we only stop writing: the lookup itself finishes and is cached for the next person.
+  let closed = false;
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      let closed = false;
       const send = (event: StreamEvent) => {
         if (closed) return;
         try {
@@ -58,8 +57,7 @@ export async function GET(request: Request): Promise<Response> {
       let lastProgress = 0;
       try {
         const data = await loadList(source, {
-          signal: abort.signal,
-          beforeFetch: () => takeToken(ip),
+          charge: (units) => chargeUnits(ip, units),
           onMeta: (meta, cached) => send({ type: 'meta', meta, cached }),
           onProgress: (loaded, total) => {
             const now = Date.now();
@@ -87,7 +85,7 @@ export async function GET(request: Request): Promise<Response> {
       }
     },
     cancel() {
-      abort.abort();
+      closed = true;
     },
   });
 

@@ -131,6 +131,8 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
 
   const calculate = useCallback(
     async (text: string, preset?: Partial<ShareState>) => {
+      // A new request replaces whatever is running, including when the new input turns out to be invalid.
+      abortRef.current?.abort();
       const parsed = parseInput(text);
       const pending: string[] = [];
       if (!text.trim()) {
@@ -153,7 +155,6 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
         pending.push(fill(ui.form.startIndexNote, { n: f.int(parsed.startIndex) }));
       }
 
-      abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
       setStatus('loading');
@@ -203,7 +204,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
 
       setLists(loaded);
       setSources(loadedSources);
-      setNotices(pending);
+      setNotices([...new Set(pending)]);
       setStatus('done');
 
       const seconds = loaded.reduce((sum, l) => sum + l.videos.reduce((s, v) => s + (v.s ? 0 : v.d), 0), 0);
@@ -228,11 +229,16 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
   );
 
   // Open a shared link (?q=…): start the calculation the server already prepared the form for.
+  // Runs once; in development StrictMode mounts twice, so the cleanup cancels and the second mount starts again.
   const started = useRef(false);
   useEffect(() => {
     if (started.current || !initial) return;
     started.current = true;
     void calculate(initial.sources.map(sourceToLink).join('\n'), initial);
+    return () => {
+      abortRef.current?.abort();
+      started.current = false;
+    };
   }, [calculate, initial]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
@@ -453,29 +459,37 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
           </button>
         </div>
 
-        <div className="calc-form__status" role="status" aria-live="polite">
-          {loading && progress ? (
-            <div className="progress">
-              <div className="progress__text">
-                <span className="progress__title">
-                  {progress.title ? fill(ui.progress.reading, { title: progress.title }) : ui.form.submitting}
-                  {progress.lists > 1 ? ` (${fill(ui.progress.listOf, { n: f.int(progress.list), total: f.int(progress.lists) })})` : ''}
+        <p className="visually-hidden" role="status" aria-live="polite">
+          {loading && progress?.title ? fill(ui.progress.reading, { title: progress.title }) : ''}
+        </p>
+        {loading && progress ? (
+          <div className="progress">
+            <div className="progress__text">
+              <span className="progress__title">
+                {progress.title ? fill(ui.progress.reading, { title: progress.title }) : ui.form.submitting}
+                {progress.lists > 1 ? ` (${fill(ui.progress.listOf, { n: f.int(progress.list), total: f.int(progress.lists) })})` : ''}
+              </span>
+              {progress.total ? (
+                <span className="progress__count">
+                  {fill(ui.progress.count, { loaded: f.int(progress.loaded), total: f.int(progress.total) })}
+                  {progress.estimate > 2 && progressPct < 100
+                    ? `, ${fill(ui.progress.estimate, { seconds: f.int(progress.estimate) })}`
+                    : ''}
                 </span>
-                {progress.total ? (
-                  <span className="progress__count">
-                    {fill(ui.progress.count, { loaded: f.int(progress.loaded), total: f.int(progress.total) })}
-                    {progress.estimate > 2 && progressPct < 100
-                      ? `, ${fill(ui.progress.estimate, { seconds: f.int(progress.estimate) })}`
-                      : ''}
-                  </span>
-                ) : null}
-              </div>
-              <progress className="progress__bar" max={100} value={progressPct || undefined} />
-              <button type="button" className="text-button" onClick={cancel}>
-                {ui.progress.cancel}
-              </button>
+              ) : null}
             </div>
-          ) : null}
+            <progress
+              className="progress__bar"
+              max={100}
+              value={progressPct || undefined}
+              aria-label={ui.form.submitting}
+            />
+            <button type="button" className="text-button" onClick={cancel}>
+              {ui.progress.cancel}
+            </button>
+          </div>
+        ) : null}
+        <div role="alert" className="calc-form__alert">
           {status === 'error' && error ? <p className="alert alert--error">{error}</p> : null}
         </div>
 

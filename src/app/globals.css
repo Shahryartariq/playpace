@@ -739,7 +739,7 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
   }
 }
 
-.calc-form__status:empty {
+.calc-form__alert:empty {
   display: none;
 }
 

@@ -4,10 +4,10 @@ import { ImageResponse } from 'next/og';
 import { defaultLocale, isLocale, localeInfo, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import type { Dictionary } from '@/i18n/types';
-import { atSpeed, combine, computeTotals } from '@/lib/calc';
+import { atSpeed, combine, computeTotals, normalizeSelection } from '@/lib/calc';
 import { fill, formatDuration, formatSpeed, plural } from '@/lib/format';
 import { loadList } from '@/lib/server/lists';
-import { clientIp, takeToken } from '@/lib/server/rate-limit';
+import { chargeUnits, clientIp } from '@/lib/server/rate-limit';
 import { readShareQuery } from '@/lib/share';
 
 export const runtime = 'nodejs';
@@ -94,10 +94,21 @@ function textFor(locale: Locale): { dict: Dictionary; locale: Locale } {
 async function sharedCard(params: URLSearchParams, locale: Locale, ip: string) {
   const shared = readShareQuery(params);
   if (!shared) return null;
+  // At most three lists on a preview image; lookups are charged to the requester like on the page.
   const lists = await Promise.all(
-    shared.sources.map((source) =>
-      Promise.race([loadList(source, { beforeFetch: () => takeToken(ip) }), new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000))]).catch(() => null),
-    ),
+    shared.sources.slice(0, 3).map(async (source) => {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), 8000);
+      });
+      try {
+        return await Promise.race([loadList(source, { charge: (units) => chargeUnits(ip, units) }), timeout]);
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timer);
+      }
+    }),
   );
   const loaded = lists.filter((l): l is NonNullable<typeof l> => !!l);
   if (!loaded.length) return null;
@@ -105,7 +116,7 @@ async function sharedCard(params: URLSearchParams, locale: Locale, ip: string) {
   const { dict, locale: textLocale } = textFor(locale);
   const tag = localeInfo[textLocale].tag;
   const items = combine(loaded);
-  const totals = computeTotals(items, { ...shared.selection, to: shared.selection.to || items.length });
+  const totals = computeTotals(items, normalizeSelection(shared.selection, items.length));
   const speed = shared.speed === 1 ? 2 : shared.speed;
   const rawTitle = loaded.map((l) => l.meta.title).join(' + ');
   const title = drawable(rawTitle) ? clip(rawTitle, 70) : 'YouTube';

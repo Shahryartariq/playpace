@@ -138,6 +138,7 @@ export interface PlanOptions {
   weekdaysOnly?: boolean;
 }
 
+/** Ten years of days is plenty for any real plan and keeps the work bounded. */
 export const MAX_PLAN_DAYS = 3650;
 
 function nextStudyDay(date: Date, weekdaysOnly: boolean): Date {
@@ -166,7 +167,7 @@ export function planDays(items: Item[], opts: PlanOptions): PlanDay[] {
   let used = 0;
 
   const close = () => {
-    if (!current.length) return;
+    if (!current.length || days.length >= MAX_PLAN_DAYS) return;
     days.push({ index: days.length + 1, date, segments: current, seconds: used / speed });
     date = nextStudyDay(addDays(date, 1), weekdaysOnly);
     current = [];
