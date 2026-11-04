@@ -1,0 +1,42 @@
+{
+  "name": "playpace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playpace: YouTube playlist length calculator. Total time at any speed, ranges, daily plans, watched tracking. Free, no sign-up.",
+  "license": "MIT",
+  "author": "Muhammad Shehryar (https://github.com/Shahryartariq)",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@fontsource-variable/onest": "^5.3.1",
+    "@vercel/functions": "^3.10.6",
+    "next": "16.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.5",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.12"
+  },
+  "type": "module"
+}
