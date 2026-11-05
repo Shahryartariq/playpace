@@ -191,3 +191,20 @@ test('language links follow in-app navigation to the same page', async ({ page, 
   await expect(page.locator('.site-footer__langs a[hreflang="es"]')).toHaveAttribute('href', '/es/speed-calculator');
   await expect(page.locator('.site-header .site-nav__link')).toHaveAttribute('aria-current', 'page');
 });
+
+test('the timeline has no per-block <title> tags and shows a hover label instead', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Hover is a pointer feature.');
+  await page.goto('/');
+  await calculate(page, LONG);
+  // Hundreds of SVG <title> tags make Malwarebytes Browser Guard block the page.
+  await expect(page.locator('.timeline title')).toHaveCount(0);
+
+  await page.goto('/');
+  await calculate(page, COURSE);
+  const svg = page.locator('.timeline__svg');
+  await svg.hover({ position: { x: 3, y: 26 } });
+  await expect(page.locator('.timeline__hover')).toContainText('1. Lesson 1: Setting up your tools');
+  await expect(page.locator('.timeline__block.is-hover')).toHaveCount(1);
+  await page.locator('.summary').hover();
+  await expect(page.locator('.timeline__hover')).toHaveText('');
+});

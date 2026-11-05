@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { atSpeed, type Item } from '@/lib/calc';
 import { fill } from '@/lib/format';
 import type { Ui } from './types';
@@ -30,10 +30,15 @@ interface Block {
 /**
  * The playlist as a strip of blocks, one per video, sized by length. At higher speeds the strip
  * shrinks to show how much of the original running time is left; the dashed part is time saved.
+ *
+ * Hovering shows one label above the strip instead of an SVG <title> per block: hundreds of <title>
+ * elements appearing at once make Malwarebytes Browser Guard block the page as a scam.
  * This part of the page only renders in the browser, so the inline styles go through the CSSOM
  * and are allowed by the nonce-based CSP.
  */
 export function Timeline({ ui, f, items, total, speed }: Props) {
+  const [hover, setHover] = useState<Block | null>(null);
+
   const blocks = useMemo(() => {
     if (!total) return [] as Block[];
     const per = Math.max(1, Math.ceil(items.length / MAX_BLOCKS));
@@ -50,17 +55,50 @@ export function Timeline({ ui, f, items, total, speed }: Props) {
   }, [items, total]);
 
   if (!blocks.length) return null;
-  const scale = 1 / speed;
-  const savedWidth = WIDTH * (1 - Math.min(1, scale));
+  const scale = Math.min(1, 1 / speed);
+  const savedWidth = WIDTH * (1 - scale);
+
+  const onPointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
+    const box = event.currentTarget.getBoundingClientRect();
+    if (!box.width) return;
+    let fraction = (event.clientX - box.left) / box.width;
+    if (getComputedStyle(event.currentTarget).direction === 'rtl') fraction = 1 - fraction;
+    const x = (fraction / scale) * WIDTH;
+    if (x < 0 || x > WIDTH) {
+      setHover(null);
+      return;
+    }
+    // Blocks are sorted by x, so a binary search finds the one under the pointer.
+    let lo = 0;
+    let hi = blocks.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (blocks[mid]!.x <= x) lo = mid;
+      else hi = mid - 1;
+    }
+    const block = blocks[lo]!;
+    setHover((prev) => (prev === block ? prev : block));
+  };
+
+  const label = hover
+    ? hover.first.n === hover.last.n
+      ? `${f.int(hover.first.n)}. ${hover.first.t} (${f.clock(atSpeed(hover.seconds, speed))})`
+      : `${f.int(hover.first.n)}–${f.int(hover.last.n)} (${f.clock(atSpeed(hover.seconds, speed))})`
+    : '';
 
   return (
     <figure className="timeline">
+      <p className="timeline__hover" aria-hidden="true" dir="auto">
+        {label}
+      </p>
       <svg
         viewBox={`0 0 ${WIDTH} 36`}
         preserveAspectRatio="none"
         className="timeline__svg"
         role="img"
         aria-label={`${f.dur(atSpeed(total, speed))}, ${f.count(ui.plurals.videos, items.length)}`}
+        onPointerMove={onPointerMove}
+        onPointerLeave={() => setHover(null)}
       >
         {speed > 1 ? (
           <rect
@@ -73,31 +111,35 @@ export function Timeline({ ui, f, items, total, speed }: Props) {
             vectorEffect="non-scaling-stroke"
           />
         ) : null}
-        <g className="timeline__strip" style={{ transform: `scaleX(${Math.min(1, scale)})` }}>
+        <g className="timeline__strip" style={{ transform: `scaleX(${scale})` }}>
           {blocks.map((b, i) => (
             <rect
               key={b.first.n}
-              className={i % 2 ? 'timeline__block timeline__block--b' : 'timeline__block'}
+              className={[
+                'timeline__block',
+                i % 2 ? 'timeline__block--b' : '',
+                hover === b ? 'is-hover' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
               x={b.x}
               y={2}
               width={Math.max(0.6, b.w - (b.w > 3 ? 1 : 0))}
               height={32}
-            >
-              <title>
-                {b.first.n === b.last.n
-                  ? `${f.int(b.first.n)}. ${b.first.t} (${f.clock(b.seconds)})`
-                  : `${f.int(b.first.n)}–${f.int(b.last.n)} (${f.clock(b.seconds)})`}
-              </title>
-            </rect>
+            />
           ))}
         </g>
       </svg>
       <div className="timeline__axis" aria-hidden="true">
         <span>0</span>
-        <span className="timeline__end" style={{ insetInlineStart: `${Math.min(1, scale) * 100}%` }}>
+        <span className="timeline__end" style={{ insetInlineStart: `${scale * 100}%` }}>
           {f.dur(atSpeed(total, speed), false)}
         </span>
-        {speed > 1 ? <span className="timeline__saved-label">{fill(ui.results.saves, { time: f.dur(total - atSpeed(total, speed), false) })}</span> : null}
+        {speed > 1 ? (
+          <span className="timeline__saved-label">
+            {fill(ui.results.saves, { time: f.dur(total - atSpeed(total, speed), false) })}
+          </span>
+        ) : null}
       </div>
       <figcaption className="timeline__caption">{ui.results.timelineLabel}</figcaption>
     </figure>
