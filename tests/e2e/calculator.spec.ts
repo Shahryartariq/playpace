@@ -14,7 +14,9 @@ test.describe('calculator', () => {
     await expect(page.getByText('1 live stream or premiere not counted')).toBeVisible();
     await expect(page.locator('.list-card__title')).toHaveText('Full-stack web development, complete course');
     await expect(page.locator('.video-row')).toHaveCount(36);
-    await expect(page).toHaveURL(/\?q=p%3APLplaypaceSampleCourse01$/);
+    // The address bar stays put (Browser Guard blocks pages that rewrite it); share links carry the result.
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('link', { name: 'Share: WhatsApp' })).toHaveAttribute('href', /q%3Dp%253APLplaypaceSampleCourse01/);
     expect(problems).toEqual([]);
   });
 
@@ -27,7 +29,7 @@ test.describe('calculator', () => {
     await expect(page.locator('.summary__time')).toHaveText('6h 48m 19s');
     await expect(page.locator('.summary__sub .saved')).toHaveText('saves 6h 48m 19s');
     await expect(page.locator('.timeline__saved')).toBeVisible();
-    await expect(page).toHaveURL(/s=2$/);
+    await expect(page.getByRole('link', { name: 'Share: WhatsApp' })).toHaveAttribute('href', /s%3D2/);
 
     await page.getByPlaceholder('Custom speed').fill('3.5');
     await expect(page.locator('.summary__label')).toHaveText('At 3.5×');
@@ -83,7 +85,7 @@ test.describe('calculator', () => {
     await expect(page.locator('.watched-progress')).toContainText('1 watched');
 
     await page.reload();
-    await expect(page.locator('.summary')).toBeVisible();
+    await calculate(page, COURSE);
     await expect(page.locator('.summary__scope')).toHaveText('Whole list, 32 videos');
     await page.getByRole('button', { name: 'Clear watched' }).click();
     await expect(page.locator('.summary__time')).toHaveText('13h 36m 37s');
