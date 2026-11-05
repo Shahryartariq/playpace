@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { calculate, COURSE } from './helpers';
 
-const BASE = 'https://playpace.vercel.app';
+const BASE = 'https://getplaypace.vercel.app';
 
 test.describe('accessibility (WCAG 2.1 AA)', () => {
   const pages = ['/', '/speed-calculator', '/privacy', '/ur', '/ja', '/nope'];

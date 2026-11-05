@@ -109,7 +109,7 @@ export function buildIcs(days: IcsDay[], calendarName: string, url: string, now 
     end.setDate(end.getDate() + 1);
     lines.push(
       'BEGIN:VEVENT',
-      `UID:playpace-${seed}-${ymd(day.date)}-${day.index}@playpace.vercel.app`,
+      `UID:playpace-${seed}-${ymd(day.date)}-${day.index}@getplaypace.vercel.app`,
       `DTSTAMP:${stamp}`,
       `DTSTART;VALUE=DATE:${ymd(day.date)}`,
       `DTEND;VALUE=DATE:${ymd(end)}`,

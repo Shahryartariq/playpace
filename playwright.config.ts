@@ -25,6 +25,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,
-    env: { PLAYPACE_SAMPLE_DATA: '1', SITE_URL: 'https://playpace.vercel.app' },
+    env: { PLAYPACE_SAMPLE_DATA: '1', SITE_URL: 'https://getplaypace.vercel.app' },
   },
 });
