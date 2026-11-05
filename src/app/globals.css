@@ -1032,6 +1032,23 @@ html:is([lang='ur'], [lang='ar']) .big-time {
 .timeline__block--b {
   fill: var(--accent-2);
 }
+.timeline__block.is-hover {
+  fill: var(--mint-fill);
+}
+.timeline__hover {
+  min-height: 1.5em;
+  margin-bottom: 4px;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.timeline__svg {
+  cursor: crosshair;
+}
 .timeline__saved {
   fill: var(--mint-soft);
   stroke: var(--mint-fill);
