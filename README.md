@@ -2,7 +2,7 @@
 
 **Find out how long any YouTube playlist is, at every playback speed.** Paste a playlist, video or channel link and Playpace adds up every video, shows the time at 1.25×, 1.5×, 2× or any speed you type, splits it into days that fit your schedule and keeps track of what you've watched. Free, no sign-up, in 12 languages.
 
-**Live:** https://playpace.vercel.app
+**Live:** https://getplaypace.vercel.app
 
 ![Playpace share card: a 36-video course is 13h 37m, or 9h 04m at 1.5×](docs/preview.png)
 
@@ -60,7 +60,7 @@ Open http://localhost:3000. With `PLAYPACE_SAMPLE_DATA=1` the site serves built-
 | Name | Required | What it does |
 |---|---|---|
 | `YOUTUBE_API_KEY` | Yes, in production | YouTube Data API v3 key, used only on the server |
-| `SITE_URL` | No | Public address for canonical links and the sitemap. Defaults to `https://playpace.vercel.app` |
+| `SITE_URL` | No | Public address for canonical links and the sitemap. Defaults to `https://getplaypace.vercel.app` |
 | `GA_MEASUREMENT_ID` | No | Google Analytics 4 ID (`G-…`). Analytics and its CSP entries load only when set |
 | `GOOGLE_SITE_VERIFICATION` | No | Google Search Console verification code |
 | `PLAYPACE_SAMPLE_DATA` | No | `1` serves sample playlists instead of calling YouTube |

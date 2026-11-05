@@ -80,7 +80,7 @@ describe('exports', () => {
     const ics = buildIcs(
       days.map((day) => ({ day, summary: `Day ${day.index}; video 1`, description: 'Line one\nLine two, more' })),
       'Playpace plan: a very long playlist title that will need folding across several lines of the file',
-      'https://playpace.vercel.app/',
+      'https://getplaypace.vercel.app/',
       new Date(Date.UTC(2026, 10, 1, 12)),
     );
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(3);

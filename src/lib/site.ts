@@ -1,5 +1,5 @@
 export const SITE_NAME = 'Playpace';
-export const PRODUCTION_URL = 'https://playpace.vercel.app';
+export const PRODUCTION_URL = 'https://getplaypace.vercel.app';
 export const REPO_URL = 'https://github.com/Shahryartariq/playpace';
 export const AUTHOR = { name: 'Muhammad Shehryar', url: 'https://github.com/Shahryartariq' };
 
