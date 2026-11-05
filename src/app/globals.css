@@ -501,6 +501,11 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
   field-sizing: content;
   max-height: 260px;
 }
+.links-input:placeholder-shown {
+  /* Keep the placeholder on one line on narrow screens, so the empty box stays one line tall. */
+  white-space: nowrap;
+  overflow: hidden;
+}
 .links-input::placeholder {
   color: var(--ink-3);
   opacity: 0.85;
