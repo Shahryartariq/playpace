@@ -248,12 +248,8 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
     [sources, selection, speed],
   );
 
-  // Keep the address bar in sync, so copying it or reloading reopens the same result.
-  useEffect(() => {
-    if (status !== 'done' || !query) return;
-    const url = `${window.location.pathname}?${query}`;
-    if (`${window.location.pathname}${window.location.search}` !== url) window.history.replaceState(null, '', url);
-  }, [status, query]);
+  // The address bar is left alone on purpose: rewriting it to ?q=… after results appear makes
+  // Malwarebytes Browser Guard block the page. Share and copy links carry the result instead.
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();

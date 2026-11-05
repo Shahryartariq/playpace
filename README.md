@@ -15,7 +15,7 @@
 - **A timeline strip** that draws every video as a block sized by its length and shrinks as you speed up, so the time saved is visible.
 - **Daily plan.** Pick minutes per day, skip weekends, see each day's videos and your finish date, or pick a deadline and get minutes per day. Export the plan as an `.ics` file for Google Calendar, Apple Calendar or Outlook.
 - **Watched list.** Tick videos as you go; the time left updates and the marks stay in your browser.
-- **Share and export.** The address bar always reopens the current result, share buttons for WhatsApp, X, Facebook, Telegram, Reddit, LinkedIn and email, a preview image with the result's own numbers, and a CSV of every video.
+- **Share and export.** Copy a link that reopens the current result, share buttons for WhatsApp, X, Facebook, Telegram, Reddit, LinkedIn and email, a preview image with the result's own numbers, and a CSV of every video.
 - **Recent lookups**, dark mode (follows your device or your choice) and a separate **video speed calculator** page.
 - **12 languages:** English, Spanish, Portuguese, French, German, Russian, Turkish, Indonesian, Hindi, Urdu, Arabic and Japanese, with right-to-left layout for Urdu and Arabic.
 
