@@ -59,12 +59,17 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   return (
     <html lang={info.tag} dir={info.dir} suppressHydrationWarning>
       <head>
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/*
+          Browser extensions can add their own <script> to <head> before React hydrates, and React may
+          then match it to one of these inline scripts. They have already run by then, so it's harmless.
+        */}
+        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {ga ? (
           <>
             <script nonce={nonce} async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} />
             <script
               nonce={nonce}
+              suppressHydrationWarning
               dangerouslySetInnerHTML={{
                 __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga}',{anonymize_ip:true});`,
               }}
