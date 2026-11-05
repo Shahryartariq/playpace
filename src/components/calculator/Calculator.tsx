@@ -243,6 +243,14 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  // Browsers without CSS field-sizing (Firefox, Safari) don't grow the box as links are added; do it here.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el || (typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content'))) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight + 3, 260)}px`;
+  }, [input]);
+
   const query = useMemo(
     () => (sources.length ? shareQuery({ sources, selection, speed }) : ''),
     [sources, selection, speed],
@@ -334,7 +342,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
             ref={inputRef}
             className="links-input"
             name="links"
-            rows={2}
+            rows={1}
             dir="ltr"
             spellCheck={false}
             autoCapitalize="off"

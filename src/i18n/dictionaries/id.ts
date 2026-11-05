@@ -7,7 +7,7 @@ const id: Dictionary = {
       'Cari tahu durasi playlist, channel, atau daftar video YouTube. Lihat waktunya di 1,25×, 1,5×, 2×, atau kecepatan lain, lalu buat jadwal menonton. Gratis.',
     speedTitle: 'Kalkulator Kecepatan Video: Berapa Lama di 1,5× atau 2×?',
     speedDescription:
-      'Masukkan durasi video dan lihat lamanya di setiap kecepatan putar, atau cari kecepatan yang Anda perlukan agar selesai dalam waktu yang ada. Gratis, tanpa daftar.',
+      'Masukkan durasi video dan lihat lamanya di setiap kecepatan putar, atau cari kecepatan yang Anda perlukan agar selesai tepat waktu. Gratis, tanpa daftar.',
     privacyTitle: 'Privasi',
     privacyDescription: 'Apa yang disimpan Playpace, apa yang tidak, dan cara Playpace menggunakan Layanan API YouTube.',
     notFoundTitle: 'Halaman tidak ditemukan',

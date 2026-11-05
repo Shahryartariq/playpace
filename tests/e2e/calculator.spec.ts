@@ -208,3 +208,27 @@ test('the timeline has no per-block <title> tags and shows a hover label instead
   await page.locator('.summary').hover();
   await expect(page.locator('.timeline__hover')).toHaveText('');
 });
+
+test('the links box centres its placeholder and the speed rows have room', async ({ page }) => {
+  await page.goto('/');
+  const box = page.getByLabel('YouTube links');
+  const metrics = await box.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return {
+      top: parseFloat(cs.paddingTop),
+      bottom: parseFloat(cs.paddingBottom),
+      height: el.getBoundingClientRect().height,
+      line: parseFloat(cs.lineHeight),
+      borders: parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth),
+    };
+  });
+  // Empty box = one line plus equal padding, so the placeholder is vertically centred.
+  expect(metrics.top).toBe(metrics.bottom);
+  expect(Math.abs(metrics.height - (metrics.line + metrics.top + metrics.bottom + metrics.borders))).toBeLessThanOrEqual(2);
+
+  await box.fill('https://www.youtube.com/playlist?list=PLplaypaceSampleCourse01\nhttps://www.youtube.com/playlist?list=PLplaypaceSampleMusic001');
+  await expect.poll(async () => (await box.boundingBox())!.height).toBeGreaterThan(metrics.height + 10);
+
+  const rowGap = await page.locator('.speed-chips').first().evaluate((el) => parseFloat(getComputedStyle(el).rowGap));
+  expect(rowGap).toBeGreaterThanOrEqual(12);
+});

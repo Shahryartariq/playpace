@@ -42,8 +42,9 @@ test.describe('SEO', () => {
 
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
-    expect(types).toEqual(['WebSite', 'WebApplication', 'FAQPage']);
-    expect(ld['@graph'][2].mainEntity).toHaveLength(11);
+    expect(types).toEqual(['WebSite', 'Person', 'WebApplication', 'FAQPage']);
+    expect(ld['@graph'][3].mainEntity).toHaveLength(11);
+    expect(ld['@graph'][2].author).toEqual({ '@id': `${BASE}#author` });
   });
 
   test('a shared result keeps the canonical page but gets its own preview image', async ({ page }) => {
