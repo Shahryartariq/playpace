@@ -7,7 +7,7 @@ const pt: Dictionary = {
       'Descubra a duração de qualquer playlist, canal ou lista de vídeos do YouTube. Veja o tempo em 1,25×, 1,5×, 2× e outras velocidades e planeje seus dias. Grátis.',
     speedTitle: 'Calculadora de velocidade de vídeo: quanto dura em 1,5× ou 2×?',
     speedDescription:
-      'Informe a duração de um vídeo e veja quanto tempo ele leva em cada velocidade, ou descubra a velocidade necessária para terminar no tempo que você tem. Grátis e sem cadastro.',
+      'Informe a duração de um vídeo e veja quanto tempo ele leva em cada velocidade, ou descubra a velocidade certa para terminar a tempo. Grátis e sem cadastro.',
     privacyTitle: 'Privacidade',
     privacyDescription: 'O que o Playpace armazena, o que não armazena e como usa os Serviços de API do YouTube.',
     notFoundTitle: 'Página não encontrada',

@@ -64,7 +64,10 @@ describe('dictionaries', () => {
     it(`${code} keeps titles and descriptions a sensible length`, () => {
       expect(dict.meta.title.length).toBeLessThanOrEqual(75);
       expect(dict.meta.description.length).toBeGreaterThan(80);
-      expect(dict.meta.description.length).toBeLessThanOrEqual(200);
+      // Google shows about 160 characters of a description; keep every page within that.
+      expect([...dict.meta.description].length).toBeLessThanOrEqual(160);
+      expect([...dict.meta.speedDescription].length).toBeLessThanOrEqual(160);
+      expect([...dict.meta.privacyDescription].length).toBeLessThanOrEqual(160);
       expect(dict.meta.speedTitle.length).toBeLessThanOrEqual(75);
     });
 

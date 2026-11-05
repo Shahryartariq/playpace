@@ -8,9 +8,9 @@ import { JsonLd } from '@/components/JsonLd';
 import { atSpeed } from '@/lib/calc';
 import { examples } from '@/lib/examples';
 import { formatDuration, formatSpeed } from '@/lib/format';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, personLd, websiteLd } from '@/lib/seo';
 import { readShareQuery, shareQuery } from '@/lib/share';
-import { absoluteUrl, AUTHOR, sampleDataEnabled, SITE_NAME } from '@/lib/site';
+import { absoluteUrl, sampleDataEnabled, SITE_NAME } from '@/lib/site';
 
 const REFERENCE_HOURS = [1, 2, 5, 10, 24, 50, 100];
 const REFERENCE_SPEEDS = [1.25, 1.5, 1.75, 2, 2.5, 3];
@@ -39,13 +39,8 @@ function structuredData(locale: Locale) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'WebSite',
-        '@id': `${absoluteUrl('/')}#website`,
-        name: SITE_NAME,
-        url: absoluteUrl('/'),
-        inLanguage: localeInfo[locale].tag,
-      },
+      websiteLd(localeInfo[locale].tag),
+      personLd(),
       {
         '@type': 'WebApplication',
         '@id': `${url}#app`,
@@ -58,7 +53,10 @@ function structuredData(locale: Locale) {
         inLanguage: localeInfo[locale].tag,
         isAccessibleForFree: true,
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        author: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+        author: { '@id': `${absoluteUrl('/')}#author` },
+        isPartOf: { '@id': `${absoluteUrl('/')}#website` },
+        image: absoluteUrl(`/api/og?l=${locale}`),
+        screenshot: absoluteUrl(`/api/og?l=${locale}`),
         featureList: dict.content.features.map((feature) => feature.title),
       },
       {
@@ -86,6 +84,8 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[lo
 
   return (
     <main id="main">
+      {/* Thumbnails load from YouTube's image server once results appear. */}
+      <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="anonymous" />
       <JsonLd data={structuredData(locale)} nonce={nonce} />
       <div className="container hero">
         <h1 className="hero__title">{dict.hero.h1}</h1>

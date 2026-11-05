@@ -485,10 +485,12 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
 }
 
 .links-input {
+  display: block;
   width: 100%;
-  min-height: 64px;
+  /* One line (24px) plus equal padding, so the placeholder sits in the vertical middle. */
+  min-height: 58px;
   resize: vertical;
-  padding: 14px 16px;
+  padding: 16px;
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   background: var(--paper);
@@ -498,6 +500,11 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
   text-align: left;
   field-sizing: content;
   max-height: 260px;
+}
+.links-input:placeholder-shown {
+  /* Keep the placeholder on one line on narrow screens, so the empty box stays one line tall. */
+  white-space: nowrap;
+  overflow: hidden;
 }
 .links-input::placeholder {
   color: var(--ink-3);
@@ -648,7 +655,8 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
 .speed-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  /* Rows get more room than columns so the custom speed box doesn't crowd the chips above it. */
+  gap: 14px 8px;
   align-items: center;
 }
 .chip-radio span {

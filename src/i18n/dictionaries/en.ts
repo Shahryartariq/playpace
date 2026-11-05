@@ -4,7 +4,7 @@ const en: Dictionary = {
   meta: {
     title: 'YouTube Playlist Length Calculator: Total Time at Any Speed',
     description:
-      'Find out how long any YouTube playlist, channel or video list is. See the time at 1.25×, 1.5×, 2× and any speed, plan your days and track what you’ve watched. Free.',
+      'Find out how long any YouTube playlist, channel or video is. See the time at 1.25×, 1.5×, 2× or any speed, plan your days and track what you’ve watched. Free.',
     speedTitle: 'Video Speed Calculator: How Long Is It at 1.5× or 2×?',
     speedDescription:
       'Enter a video’s length and see how long it takes at every playback speed, or find the speed you need to finish in the time you have. Free, no sign-up.',

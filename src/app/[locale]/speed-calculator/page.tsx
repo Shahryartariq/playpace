@@ -6,7 +6,7 @@ import { isLocale, localeInfo, localePath } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { JsonLd } from '@/components/JsonLd';
 import { SpeedConverter } from '@/components/SpeedConverter';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, personLd, websiteLd } from '@/lib/seo';
 import { absoluteUrl, SITE_NAME } from '@/lib/site';
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/speed-calculator'>): Promise<Metadata> {
@@ -39,9 +39,14 @@ export default async function SpeedPage({ params }: PageProps<'/[locale]/speed-c
         data={{
           '@context': 'https://schema.org',
           '@graph': [
+            websiteLd(tag),
+            personLd(),
             {
               '@type': 'WebApplication',
               name: dict.speedPage.h1,
+              author: { '@id': `${absoluteUrl('/')}#author` },
+              isPartOf: { '@id': `${absoluteUrl('/')}#website` },
+              image: absoluteUrl(`/api/og?l=${locale}&p=speed`),
               url,
               description: dict.meta.speedDescription,
               applicationCategory: 'UtilitiesApplication',
