@@ -20,7 +20,6 @@
     "check": "npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
-    "@fontsource-variable/onest": "^5.3.1",
     "@vercel/functions": "^3.10.6",
     "next": "16.4.5",
     "react": "^19.3.1",

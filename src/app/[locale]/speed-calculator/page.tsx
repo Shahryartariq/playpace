@@ -6,8 +6,8 @@ import { isLocale, localeInfo, localePath } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { JsonLd } from '@/components/JsonLd';
 import { SpeedConverter } from '@/components/SpeedConverter';
-import { pageMetadata, personLd, websiteLd } from '@/lib/seo';
-import { absoluteUrl, SITE_NAME } from '@/lib/site';
+import { pageMetadata, personLd, webPageLd, websiteLd } from '@/lib/seo';
+import { absoluteUrl } from '@/lib/site';
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/speed-calculator'>): Promise<Metadata> {
   const { locale } = await params;
@@ -41,8 +41,18 @@ export default async function SpeedPage({ params }: PageProps<'/[locale]/speed-c
           '@graph': [
             websiteLd(tag),
             personLd(),
+            ...webPageLd({
+              locale,
+              path: '/speed-calculator',
+              name: dict.meta.speedTitle,
+              description: dict.meta.speedDescription,
+              image: `/api/og?l=${locale}&p=speed`,
+              trail: [[dict.speedPage.h1, '/speed-calculator']],
+              mainEntity: `${url}#app`,
+            }),
             {
               '@type': 'WebApplication',
+              '@id': `${url}#app`,
               name: dict.speedPage.h1,
               author: { '@id': `${absoluteUrl('/')}#author` },
               isPartOf: { '@id': `${absoluteUrl('/')}#website` },
@@ -51,16 +61,10 @@ export default async function SpeedPage({ params }: PageProps<'/[locale]/speed-c
               description: dict.meta.speedDescription,
               applicationCategory: 'UtilitiesApplication',
               operatingSystem: 'Any',
+              browserRequirements: 'Requires JavaScript',
               inLanguage: tag,
               isAccessibleForFree: true,
               offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-            },
-            {
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                { '@type': 'ListItem', position: 1, name: SITE_NAME, item: absoluteUrl(localePath(locale)) },
-                { '@type': 'ListItem', position: 2, name: dict.speedPage.h1, item: url },
-              ],
             },
             {
               '@type': 'FAQPage',

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { localeInfo, localePath, locales } from '@/i18n/config';
+import { PAGE_DATES } from '@/lib/seo';
 import { absoluteUrl } from '@/lib/site';
 
 const PAGES = [
@@ -10,8 +11,8 @@ const PAGES = [
 
 /** Every page in every language, each listing its translations. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date('2026-11-05');
   return PAGES.flatMap((page) => {
+    const lastModified = new Date(PAGE_DATES[page.path]?.modified ?? '2026-11-05');
     const languages = Object.fromEntries([
       ...locales.map((l) => [localeInfo[l].tag, absoluteUrl(localePath(l, page.path))]),
       ['x-default', absoluteUrl(localePath('en', page.path))],

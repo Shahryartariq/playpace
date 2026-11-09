@@ -24,7 +24,7 @@
   --focus: #3442f5;
   --shadow: 0 1px 2px rgb(18 20 43 / 6%), 0 8px 24px -12px rgb(18 20 43 / 18%);
 
-  --font: 'Onest Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font: 'Onest', 'Onest Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --radius-xl: 24px;
   --radius-lg: 16px;
   --radius: 10px;
@@ -87,6 +87,52 @@
   color-scheme: dark;
 }
 
+/*
+  Onest, self-hosted in /public/fonts (SIL Open Font License) so the Latin file can be preloaded
+  and the first paint already uses it, instead of a visible swap from the fallback.
+*/
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/onest-latin-var.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/onest-latin-ext-var.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/onest-cyrillic-var.woff2') format('woff2-variations');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/onest-cyrillic-ext-var.woff2') format('woff2-variations');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* Arial resized to Onest's width and line height, so text doesn't jump when Onest arrives. */
+@font-face {
+  font-family: 'Onest Fallback';
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 106.21%;
+  ascent-override: 91.33%;
+  descent-override: 28.72%;
+  line-gap-override: 0%;
+}
+
 /* Scripts the main face doesn't cover (files in /public/fonts, SIL Open Font License). */
 @font-face {
   font-family: 'Playpace Nastaliq';
@@ -115,20 +161,20 @@
 
 /* Onest stays first so Latin text and digits keep one look. */
 html[lang='hi'] {
-  --font: 'Onest Variable', 'Playpace Devanagari', 'Nirmala UI', system-ui, sans-serif;
+  --font: 'Onest', 'Onest Fallback', 'Playpace Devanagari', 'Nirmala UI', system-ui, sans-serif;
 }
 html[lang='ar'] {
-  --font: 'Onest Variable', 'Playpace Arabic', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --font: 'Onest', 'Onest Fallback', 'Playpace Arabic', 'Segoe UI', Tahoma, system-ui, sans-serif;
 }
 html[lang='ur'] {
-  --font: 'Onest Variable', 'Playpace Nastaliq', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --font: 'Onest', 'Onest Fallback', 'Playpace Nastaliq', 'Segoe UI', Tahoma, system-ui, sans-serif;
 }
 /* Nastaliq ships one weight; contrast comes from size, not faux bold. */
 html[lang='ur'] :is(h1, h2, h3, strong, b, th, legend, label, button, summary, .field__label, .brand) {
   font-synthesis: none;
 }
 html[lang='ja'] {
-  --font: 'Onest Variable', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', Meiryo,
+  --font: 'Onest', 'Onest Fallback', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', Meiryo,
     system-ui, sans-serif;
 }
 
@@ -496,7 +542,7 @@ html:is([lang='ur'], [lang='ar']) .hero__title {
   background: var(--paper);
   font-size: 1rem;
   line-height: 1.5;
-  font-family: 'Onest Variable', system-ui, sans-serif;
+  font-family: 'Onest', 'Onest Fallback', system-ui, sans-serif;
   text-align: left;
   field-sizing: content;
   max-height: 260px;
@@ -931,7 +977,7 @@ progress::-moz-progress-bar {
   line-height: 1;
   letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
-  font-family: 'Onest Variable', var(--font);
+  font-family: 'Onest', 'Onest Fallback', var(--font);
 }
 html:is([lang='ur'], [lang='ar']) .big-time {
   font-size: clamp(2.4rem, 1.2rem + 5vw, 4.6rem);
