@@ -128,6 +128,20 @@ const hi: Dictionary = {
     showFewer: 'कम दिन दिखाएं',
     calendarName: 'देखने का प्लान: {title}',
   },
+  fit: {
+    heading: 'आपके पास कितना समय है?',
+    lead: 'अपना उपलब्ध समय डालें और YouTube की वह सबसे धीमी स्पीड जानें जिस पर आप समय पर पूरा कर लेंगे।',
+    hours: 'घंटे',
+    minutes: 'मिनट',
+    speedLabel: 'आपकी स्पीड',
+    normal: 'नॉर्मल स्पीड काफ़ी है। इसमें {time} लगेंगे।',
+    finish: 'आप {time} में पूरा कर लेंगे।',
+    spare: '{spare} बचेंगे।',
+    premium: '2× से ज़्यादा स्पीड के लिए YouTube Premium चाहिए, जो 4× तक जाता है।',
+    impossible: 'इतना समय काफ़ी नहीं है। YouTube की सबसे तेज़ स्पीड 4× पर भी {time} लगेंगे।',
+    apply: '{speed} चुनें',
+    howTo: 'YouTube पर सेटिंग › प्लेबैक स्पीड खोलें और {speed} चुनें।',
+  },
   list: {
     heading: 'वीडियो',
     search: 'टाइटल में खोजें',
@@ -263,11 +277,6 @@ const hi: Dictionary = {
     speed: 'स्पीड',
     resultAt: '{speed} पर',
     tableHeading: 'हर स्पीड पर',
-    targetHeading: 'मुझे कौन-सी स्पीड चाहिए?',
-    targetLabel: 'मेरे पास कितना समय है (मिनट)',
-    needSpeed: '{speed} या उससे तेज़ स्पीड पर देखें।',
-    normalIsFine: 'नॉर्मल स्पीड पर भी आपके पास काफ़ी समय है।',
-    tooShort: 'यह समय बहुत कम है, 16× पर भी पूरा नहीं होगा।',
     faq: [
       {
         q: 'तेज़ स्पीड पर वीडियो की लंबाई कैसे निकालें?',

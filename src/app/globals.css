@@ -1600,6 +1600,74 @@ html:is([lang='hi'], [lang='ur'], [lang='ar'], [lang='ja']) .section__title {
   color: var(--ink-2);
 }
 
+/* How much time do you have? */
+
+.time-fit {
+  display: grid;
+  gap: 18px 32px;
+  padding: 20px;
+}
+@media (min-width: 720px) {
+  .time-fit {
+    padding: 24px 26px;
+  }
+}
+@media (min-width: 900px) {
+  .time-fit {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+.time-fit .panel__title {
+  margin-bottom: 6px;
+}
+.time-fit__lead {
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+.time-fit__answer {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+.time-fit__answer:empty {
+  display: none;
+}
+.time-fit__result {
+  display: grid;
+  gap: 2px;
+}
+.time-fit__label {
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.time-fit__speed {
+  font-size: clamp(2.2rem, 1.7rem + 2.4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.time-fit__text {
+  font-size: 1.06rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+.time-fit__text--warn {
+  color: var(--warn);
+}
+.time-fit__how {
+  color: var(--ink-2);
+  font-size: 0.95rem;
+}
+.converter > .time-fit {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
 /* Speed calculator page */
 
 .converter {

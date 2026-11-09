@@ -164,6 +164,27 @@ export interface Dictionary {
     /** {title} */
     calendarName: string;
   };
+  /** "How much time do you have?": the slowest YouTube speed that fits the time. */
+  fit: {
+    heading: string;
+    lead: string;
+    hours: string;
+    minutes: string;
+    speedLabel: string;
+    /** {time} */
+    normal: string;
+    /** {time} */
+    finish: string;
+    /** {spare} */
+    spare: string;
+    premium: string;
+    /** {time} */
+    impossible: string;
+    /** {speed} */
+    apply: string;
+    /** {speed} */
+    howTo: string;
+  };
   list: {
     heading: string;
     search: string;
@@ -245,12 +266,6 @@ export interface Dictionary {
     /** {speed} */
     resultAt: string;
     tableHeading: string;
-    targetHeading: string;
-    targetLabel: string;
-    /** {speed} */
-    needSpeed: string;
-    normalIsFine: string;
-    tooShort: string;
     faq: QA[];
     toPlaylist: string;
     toPlaylistLink: string;

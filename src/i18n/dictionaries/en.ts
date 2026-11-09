@@ -122,6 +122,20 @@ const en: Dictionary = {
     showFewer: 'Show fewer days',
     calendarName: 'Watch plan: {title}',
   },
+  fit: {
+    heading: 'How much time do you have?',
+    lead: 'Enter the time you have and get the slowest YouTube speed that still finishes in time.',
+    hours: 'Hours',
+    minutes: 'Minutes',
+    speedLabel: 'Your speed',
+    normal: 'Normal speed is enough. It takes {time}.',
+    finish: 'You’ll finish in {time}.',
+    spare: '{spare} to spare.',
+    premium: 'Speeds above 2× need YouTube Premium, which goes up to 4×.',
+    impossible: 'That’s not enough time. Even at 4×, the fastest YouTube allows, it takes {time}.',
+    apply: 'Use {speed}',
+    howTo: 'On YouTube, open Settings › Playback speed and set {speed}.',
+  },
   list: {
     heading: 'Videos',
     search: 'Search titles',
@@ -257,11 +271,6 @@ const en: Dictionary = {
     speed: 'Speed',
     resultAt: 'At {speed}',
     tableHeading: 'At every speed',
-    targetHeading: 'What speed do I need?',
-    targetLabel: 'Time I have (minutes)',
-    needSpeed: 'Watch at {speed} or faster.',
-    normalIsFine: 'You have enough time at normal speed.',
-    tooShort: 'That’s too little time, even at 16×.',
     faq: [
       {
         q: 'How do I work out a video’s length at a faster speed?',

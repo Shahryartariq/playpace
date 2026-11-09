@@ -3,6 +3,7 @@
 import { useMemo, type RefObject } from 'react';
 import { atSpeed, cumulativeEnds, inSelection, isCountable, type Item, type Selection, type Totals } from '@/lib/calc';
 import { fill } from '@/lib/format';
+import { TimeFit } from '@/components/TimeFit';
 import type { ListData } from '@/lib/youtube/types';
 import { Planner } from './Planner';
 import { ShareExport } from './ShareExport';
@@ -147,6 +148,8 @@ export function Results(props: Props) {
       </div>
 
       <Timeline ui={ui} f={f} items={counted} total={totals.seconds} speed={speed} />
+
+      <TimeFit t={ui.fit} units={ui.units} tag={f.tag} seconds={totals.seconds} speed={speed} onApply={onSpeed} />
 
       <div className="results__grid">
         <SpeedTable ui={ui} f={f} seconds={totals.seconds} speed={speed} onSpeed={onSpeed} />

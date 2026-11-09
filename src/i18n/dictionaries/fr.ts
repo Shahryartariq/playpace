@@ -130,6 +130,20 @@ const fr: Dictionary = {
     showFewer: 'Afficher moins de jours',
     calendarName: 'Planning de visionnage : {title}',
   },
+  fit: {
+    heading: 'De combien de temps disposez-vous ?',
+    lead: 'Indiquez le temps dont vous disposez pour connaître la vitesse YouTube la plus lente qui permet de finir à temps.',
+    hours: 'Heures',
+    minutes: 'Minutes',
+    speedLabel: 'Votre vitesse',
+    normal: 'La vitesse normale suffit. Il faut {time}.',
+    finish: 'Vous aurez fini en {time}.',
+    spare: 'Il vous restera {spare}.',
+    premium: 'Les vitesses au-delà de 2× nécessitent YouTube Premium, qui va jusqu’à 4×.',
+    impossible: 'Ce n’est pas assez. Même à 4×, le maximum sur YouTube, il faut {time}.',
+    apply: 'Passer à {speed}',
+    howTo: 'Sur YouTube, ouvrez Paramètres › Vitesse de lecture et choisissez {speed}.',
+  },
   list: {
     heading: 'Vidéos',
     search: 'Rechercher un titre',
@@ -265,11 +279,6 @@ const fr: Dictionary = {
     speed: 'Vitesse',
     resultAt: 'À {speed}',
     tableHeading: 'À chaque vitesse',
-    targetHeading: 'Quelle vitesse me faut-il ?',
-    targetLabel: 'Temps disponible (minutes)',
-    needSpeed: 'Regardez à {speed} ou plus vite.',
-    normalIsFine: 'Vous avez assez de temps à vitesse normale.',
-    tooShort: 'C’est trop peu de temps, même à 16×.',
     faq: [
       {
         q: 'Comment calculer la durée d’une vidéo à une vitesse plus élevée ?',

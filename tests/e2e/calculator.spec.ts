@@ -36,6 +36,36 @@ test.describe('calculator', () => {
     await expect(page.locator('.speed-table tr.is-current th')).toHaveText('3.5×');
   });
 
+  test('finds the slowest YouTube speed that fits the time you have', async ({ page }) => {
+    await page.goto('/');
+    await calculate(page, COURSE);
+    const fit = page.getByRole('region', { name: 'How much time do you have?' });
+
+    // 13h 36m 37s in 8 hours needs 1.70× → 1.75×, free on YouTube.
+    await fit.getByLabel('Hours').fill('8');
+    await expect(fit.locator('.time-fit__speed')).toHaveText('1.75×');
+    await expect(fit.getByText('You’ll finish in 7h 46m 38s. 13m to spare.')).toBeVisible();
+    await expect(fit.getByText(/YouTube Premium/)).toHaveCount(0);
+    await fit.getByRole('button', { name: 'Use 1.75×' }).click();
+    await expect(page.locator('.summary__label')).toHaveText('At 1.75×');
+    await expect(page.locator('.summary__time')).toHaveText('7h 46m 38s');
+
+    // 4 hours needs more than 2×, which takes Premium.
+    await fit.getByLabel('Hours').fill('4');
+    await expect(fit.locator('.time-fit__speed')).toHaveText('3.45×');
+    await expect(fit.getByText('Speeds above 2× need YouTube Premium, which goes up to 4×.')).toBeVisible();
+
+    // 3 hours is too little even at 4×.
+    await fit.getByLabel('Hours').fill('3');
+    await expect(fit.getByText('That’s not enough time. Even at 4×, the fastest YouTube allows, it takes 3h 24m 09s.')).toBeVisible();
+    await expect(fit.locator('.time-fit__speed')).toHaveCount(0);
+
+    // Enough time: normal speed.
+    await fit.getByLabel('Hours').fill('14');
+    await expect(fit.locator('.time-fit__speed')).toHaveText('1×');
+    await expect(fit.getByText('Normal speed is enough. It takes 13h 36m 37s. 23m to spare.')).toBeVisible();
+  });
+
   test('counts a range and the rest of a list from a video', async ({ page }) => {
     await page.goto('/');
     await calculate(page, COURSE);
@@ -155,11 +185,19 @@ test.describe('calculator', () => {
 test('the speed calculator converts a length at every speed', async ({ page }) => {
   await page.goto('/speed-calculator');
   await expect(page.locator('.converter__time')).toHaveText('40m 00s');
-  await page.getByLabel('Minutes', { exact: true }).fill('30');
+  await page.locator('.converter__form').getByLabel('Minutes', { exact: true }).fill('30');
   await page.locator('.converter__form .custom-speed input').fill('2');
   await expect(page.locator('.converter__time')).toHaveText('45m 00s');
-  await page.getByLabel('Time I have (minutes)').fill('60');
-  await expect(page.getByText('Watch at 1.5× or faster.')).toBeVisible();
+
+  // 1h 30m in 1h 05m needs 1.385× → YouTube's next step up is 1.4×.
+  const fit = page.getByRole('region', { name: 'How much time do you have?' });
+  await fit.getByLabel('Hours').fill('1');
+  await fit.getByLabel('Minutes').fill('5');
+  await expect(fit.locator('.time-fit__speed')).toHaveText('1.4×');
+  await expect(fit.getByText('You’ll finish in 1h 04m 17s.')).toBeVisible();
+  await fit.getByRole('button', { name: 'Use 1.4×' }).click();
+  await expect(page.locator('.converter__form .custom-speed input')).toHaveValue('1.4');
+  await expect(fit.getByRole('button', { name: 'Use 1.4×' })).toHaveCount(0);
 });
 
 test('the theme toggle switches and remembers dark mode', async ({ page }) => {
