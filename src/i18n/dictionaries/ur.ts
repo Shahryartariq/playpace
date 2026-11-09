@@ -128,6 +128,20 @@ const ur: Dictionary = {
     showFewer: 'کم دن دکھائیں',
     calendarName: 'دیکھنے کا پلان: {title}',
   },
+  fit: {
+    heading: 'آپ کے پاس کتنا وقت ہے؟',
+    lead: 'اپنا دستیاب وقت لکھیں اور YouTube کی وہ سب سے کم رفتار جانیں جس پر آپ وقت پر ختم کر لیں گے۔',
+    hours: 'گھنٹے',
+    minutes: 'منٹ',
+    speedLabel: 'آپ کی رفتار',
+    normal: 'نارمل رفتار کافی ہے۔ اس میں {time} لگیں گے۔',
+    finish: 'آپ {time} میں ختم کر لیں گے۔',
+    spare: '{spare} بچ جائیں گے۔',
+    premium: '2× سے زیادہ رفتار کے لیے YouTube Premium ضروری ہے، جو 4× تک جاتا ہے۔',
+    impossible: 'یہ وقت کافی نہیں۔ YouTube کی سب سے تیز رفتار 4× پر بھی {time} لگیں گے۔',
+    apply: '{speed} استعمال کریں',
+    howTo: 'YouTube پر ترتیبات ← پلے بیک کی رفتار کھولیں اور {speed} منتخب کریں۔',
+  },
   list: {
     heading: 'ویڈیوز',
     search: 'عنوانات میں تلاش کریں',
@@ -263,11 +277,6 @@ const ur: Dictionary = {
     speed: 'رفتار',
     resultAt: '{speed} پر',
     tableHeading: 'ہر رفتار پر',
-    targetHeading: 'مجھے کتنی رفتار چاہیے؟',
-    targetLabel: 'میرے پاس موجود وقت (منٹ)',
-    needSpeed: '{speed} یا اس سے تیز رفتار پر دیکھیں۔',
-    normalIsFine: 'نارمل رفتار پر بھی آپ کے پاس کافی وقت ہے۔',
-    tooShort: 'یہ وقت بہت کم ہے، 16× پر بھی کافی نہیں۔',
     faq: [
       {
         q: 'تیز رفتار پر ویڈیو کا دورانیہ کیسے نکالوں؟',

@@ -99,6 +99,7 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[lo
             progress: dict.progress,
             errors: dict.errors,
             results: dict.results,
+            fit: dict.fit,
             planner: dict.planner,
             list: dict.list,
             actions: dict.actions,

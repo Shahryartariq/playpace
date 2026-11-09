@@ -136,6 +136,20 @@ const ar: Dictionary = {
     showFewer: 'عرض أيام أقل',
     calendarName: 'خطة المشاهدة: {title}',
   },
+  fit: {
+    heading: 'كم لديك من الوقت؟',
+    lead: 'أدخل الوقت المتاح لديك لمعرفة أبطأ سرعة على YouTube تُنهي بها المشاهدة في الوقت المحدد.',
+    hours: 'الساعات',
+    minutes: 'الدقائق',
+    speedLabel: 'سرعتك',
+    normal: 'السرعة العادية تكفي. تستغرق {time}.',
+    finish: 'ستنتهي خلال {time}.',
+    spare: 'سيتبقى لديك {spare}.',
+    premium: 'السرعات الأعلى من 2× تتطلب YouTube Premium، الذي يصل إلى 4×.',
+    impossible: 'الوقت لا يكفي. حتى بسرعة 4×، وهي أقصى سرعة في YouTube، تستغرق {time}.',
+    apply: 'استخدم {speed}',
+    howTo: 'في YouTube، افتح الإعدادات ← سرعة التشغيل واختر {speed}.',
+  },
   list: {
     heading: 'الفيديوهات',
     search: 'البحث في العناوين',
@@ -285,11 +299,6 @@ const ar: Dictionary = {
     speed: 'السرعة',
     resultAt: 'بسرعة {speed}',
     tableHeading: 'بكل سرعة',
-    targetHeading: 'ما السرعة التي أحتاجها؟',
-    targetLabel: 'الوقت المتاح لي (بالدقائق)',
-    needSpeed: 'شاهد بسرعة {speed} أو أعلى.',
-    normalIsFine: 'لديك وقت كافٍ بالسرعة العادية.',
-    tooShort: 'هذا الوقت قصير جدًا، حتى بسرعة 16×.',
     faq: [
       {
         q: 'كيف أحسب مدة الفيديو بسرعة أعلى؟',

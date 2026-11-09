@@ -122,6 +122,20 @@ const tr: Dictionary = {
     showFewer: 'Daha az gün göster',
     calendarName: 'İzleme planı: {title}',
   },
+  fit: {
+    heading: 'Ne kadar zamanınız var?',
+    lead: 'Ne kadar zamanınız olduğunu girin, zamanında bitirmenizi sağlayan en yavaş YouTube hızını görün.',
+    hours: 'Saat',
+    minutes: 'Dakika',
+    speedLabel: 'Hızınız',
+    normal: 'Normal hız yeterli. {time} sürer.',
+    finish: '{time} içinde bitirirsiniz.',
+    spare: '{spare} artar.',
+    premium: '2×’in üzerindeki hızlar YouTube Premium gerektirir; Premium 4×’e kadar çıkar.',
+    impossible: 'Bu süre yetmez. YouTube’un en yüksek hızı olan 4×’te bile {time} sürer.',
+    apply: '{speed} kullan',
+    howTo: 'YouTube’da Ayarlar › Oynatma hızı menüsünü açıp {speed} seçin.',
+  },
   list: {
     heading: 'Videolar',
     search: 'Başlıklarda ara',
@@ -257,11 +271,6 @@ const tr: Dictionary = {
     speed: 'Hız',
     resultAt: '{speed} hızda',
     tableHeading: 'Her hızda',
-    targetHeading: 'Hangi hıza ihtiyacım var?',
-    targetLabel: 'Ayırabildiğim süre (dakika)',
-    needSpeed: '{speed} veya daha yüksek hızda izleyin.',
-    normalIsFine: 'Normal hızda izlemek için yeterli zamanınız var.',
-    tooShort: 'Bu süre 16× hızda bile yetmez.',
     faq: [
       {
         q: 'Bir videonun daha yüksek hızdaki süresini nasıl hesaplarım?',

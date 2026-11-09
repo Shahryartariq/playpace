@@ -227,3 +227,37 @@ export function cumulativeEnds(items: Item[], sel: Selection, watched: ReadonlyS
   }
   return ends;
 }
+
+/** YouTube's speed limits: anyone can go up to 2×, YouTube Premium up to 4×, both in 0.05× steps. */
+export const YOUTUBE_FREE_MAX = 2;
+export const YOUTUBE_PREMIUM_MAX = 4;
+export const YOUTUBE_STEP = 0.05;
+
+export type FitKind = 'normal' | 'free' | 'premium' | 'impossible';
+
+export interface Fit {
+  kind: FitKind;
+  /** The slowest YouTube speed that finishes in time (1 when normal speed is enough). */
+  speed: number;
+  /** How long watching takes at that speed, in seconds. */
+  watch: number;
+  /** Time left over, in seconds (0 when impossible). */
+  spare: number;
+}
+
+/**
+ * The slowest playback speed YouTube can actually be set to that fits `seconds` of video into
+ * `available` seconds. Speeds are rounded up to YouTube's 0.05× steps, so the answer always fits.
+ */
+export function speedToFit(seconds: number, available: number): Fit | null {
+  if (!(seconds > 0) || !(available > 0)) return null;
+  if (seconds <= available) return { kind: 'normal', speed: 1, watch: seconds, spare: available - seconds };
+  const exact = seconds / available;
+  // Round up to the next 0.05 step; the small epsilon keeps 1.5 from becoming 1.55 through float error.
+  const speed = Math.round(Math.ceil(exact / YOUTUBE_STEP - 1e-9) * YOUTUBE_STEP * 100) / 100;
+  if (speed > YOUTUBE_PREMIUM_MAX) {
+    return { kind: 'impossible', speed: YOUTUBE_PREMIUM_MAX, watch: seconds / YOUTUBE_PREMIUM_MAX, spare: 0 };
+  }
+  const watch = seconds / speed;
+  return { kind: speed > YOUTUBE_FREE_MAX ? 'premium' : 'free', speed, watch, spare: Math.max(0, available - watch) };
+}

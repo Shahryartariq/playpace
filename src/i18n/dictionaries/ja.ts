@@ -122,6 +122,20 @@ const ja: Dictionary = {
     showFewer: '表示する日数を減らす',
     calendarName: '視聴計画：{title}',
   },
+  fit: {
+    heading: '使える時間はどれくらいですか？',
+    lead: '使える時間を入力すると、時間内に見終わるYouTubeの最も遅い再生速度がわかります。',
+    hours: '時間',
+    minutes: '分',
+    speedLabel: 'おすすめの速度',
+    normal: '通常の速度で間に合います。所要時間は{time}です。',
+    finish: '{time}で見終わります。',
+    spare: '{spare}の余裕があります。',
+    premium: '2×を超える速度にはYouTube Premiumが必要です（最大4×）。',
+    impossible: '時間が足りません。YouTubeの最大速度4×でも{time}かかります。',
+    apply: '{speed}にする',
+    howTo: 'YouTubeで設定 › 再生速度を開き、{speed}を選んでください。',
+  },
   list: {
     heading: '動画',
     search: 'タイトルを検索',
@@ -257,11 +271,6 @@ const ja: Dictionary = {
     speed: '速度',
     resultAt: '{speed}の場合',
     tableHeading: '再生速度ごとの時間',
-    targetHeading: '必要な再生速度は？',
-    targetLabel: '使える時間（分）',
-    needSpeed: '{speed}以上で再生してください。',
-    normalIsFine: '通常の速度でも時間内に見終わります。',
-    tooShort: '16×でも時間が足りません。',
     faq: [
       {
         q: '速い速度で見たときの動画の長さはどう計算しますか？',

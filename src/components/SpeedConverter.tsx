@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { atSpeed, clampSpeed, MAX_SPEED, SPEED_PRESETS } from '@/lib/calc';
+import { atSpeed, clampSpeed, SPEED_PRESETS } from '@/lib/calc';
 import type { Dictionary } from '@/i18n/types';
 import { fill, formatDuration, formatSpeed } from '@/lib/format';
+import { TimeFit } from './TimeFit';
 
 interface Props {
   t: Dictionary['speedPage'];
+  fit: Dictionary['fit'];
   results: Pick<Dictionary['results'], 'speedCol' | 'timeCol' | 'savedCol'>;
   units: Dictionary['units'];
   tag: string;
@@ -18,26 +20,16 @@ const int = (v: string) => {
 };
 
 /** Length × speed for a single video, plus the speed needed to fit it into the time you have. */
-export function SpeedConverter({ t, results, units, tag }: Props) {
+export function SpeedConverter({ t, fit, results, units, tag }: Props) {
   const [h, setH] = useState('1');
   const [m, setM] = useState('0');
   const [s, setS] = useState('0');
   const [speed, setSpeed] = useState('1.5');
-  const [available, setAvailable] = useState('');
 
   const seconds = int(h) * 3600 + int(m) * 60 + int(s);
   const speedValue = clampSpeed(Number.parseFloat(speed.replace(',', '.')) || 1);
   const dur = (x: number) => formatDuration(x, units, tag);
   const speeds = useMemo(() => [...new Set<number>([...SPEED_PRESETS, 4, speedValue])].sort((a, b) => a - b), [speedValue]);
-
-  const availableMinutes = Number.parseFloat(available.replace(',', '.'));
-  let answer: string | null = null;
-  if (seconds > 0 && Number.isFinite(availableMinutes) && availableMinutes > 0) {
-    const needed = seconds / (availableMinutes * 60);
-    if (needed <= 1) answer = t.normalIsFine;
-    else if (needed > MAX_SPEED) answer = t.tooShort;
-    else answer = fill(t.needSpeed, { speed: formatSpeed(Math.ceil(needed * 20) / 20, tag) });
-  }
 
   return (
     <div className="panel converter">
@@ -110,23 +102,14 @@ export function SpeedConverter({ t, results, units, tag }: Props) {
         </tbody>
       </table>
 
-      <h2 className="panel__title">{t.targetHeading}</h2>
-      <label className="field field--inline">
-        <span className="field__label">{t.targetLabel}</span>
-        <input
-          type="number"
-          inputMode="decimal"
-          min={1}
-          className="number-input"
-          value={available}
-          onChange={(e) => setAvailable(e.target.value)}
-        />
-      </label>
-      {answer ? (
-        <p className="planner__answer" aria-live="polite">
-          {answer}
-        </p>
-      ) : null}
+      <TimeFit
+        t={fit}
+        units={units}
+        tag={tag}
+        seconds={seconds}
+        speed={speedValue}
+        onApply={(x) => setSpeed(String(x))}
+      />
     </div>
   );
 }

@@ -122,6 +122,20 @@ const id: Dictionary = {
     showFewer: 'Tampilkan lebih sedikit',
     calendarName: 'Jadwal menonton: {title}',
   },
+  fit: {
+    heading: 'Berapa banyak waktu Anda?',
+    lead: 'Masukkan waktu yang Anda punya untuk melihat kecepatan YouTube paling lambat yang tetap selesai tepat waktu.',
+    hours: 'Jam',
+    minutes: 'Menit',
+    speedLabel: 'Kecepatan Anda',
+    normal: 'Kecepatan normal sudah cukup. Durasinya {time}.',
+    finish: 'Anda selesai dalam {time}.',
+    spare: 'Masih tersisa {spare}.',
+    premium: 'Kecepatan di atas 2× memerlukan YouTube Premium, yang bisa sampai 4×.',
+    impossible: 'Waktunya tidak cukup. Bahkan pada 4×, kecepatan tertinggi YouTube, durasinya {time}.',
+    apply: 'Pakai {speed}',
+    howTo: 'Di YouTube, buka Setelan › Kecepatan pemutaran lalu pilih {speed}.',
+  },
   list: {
     heading: 'Video',
     search: 'Cari judul',
@@ -257,11 +271,6 @@ const id: Dictionary = {
     speed: 'Kecepatan',
     resultAt: 'Pada {speed}',
     tableHeading: 'Di setiap kecepatan',
-    targetHeading: 'Kecepatan berapa yang saya perlukan?',
-    targetLabel: 'Waktu yang saya punya (menit)',
-    needSpeed: 'Tonton pada {speed} atau lebih cepat.',
-    normalIsFine: 'Waktu Anda cukup dengan kecepatan normal.',
-    tooShort: 'Waktunya terlalu sedikit, bahkan pada 16×.',
     faq: [
       {
         q: 'Bagaimana cara menghitung durasi video pada kecepatan lebih tinggi?',
