@@ -8,7 +8,7 @@ import { JsonLd } from '@/components/JsonLd';
 import { atSpeed } from '@/lib/calc';
 import { examples } from '@/lib/examples';
 import { formatDuration, formatSpeed } from '@/lib/format';
-import { pageMetadata, personLd, websiteLd } from '@/lib/seo';
+import { pageMetadata, personLd, webPageLd, websiteLd } from '@/lib/seo';
 import { readShareQuery, shareQuery } from '@/lib/share';
 import { absoluteUrl, sampleDataEnabled, SITE_NAME } from '@/lib/site';
 
@@ -41,6 +41,14 @@ function structuredData(locale: Locale) {
     '@graph': [
       websiteLd(localeInfo[locale].tag),
       personLd(),
+      ...webPageLd({
+        locale,
+        path: '/',
+        name: dict.meta.title,
+        description: dict.meta.description,
+        image: `/api/og?l=${locale}`,
+        mainEntity: `${url}#app`,
+      }),
       {
         '@type': 'WebApplication',
         '@id': `${url}#app`,

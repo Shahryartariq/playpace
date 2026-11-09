@@ -1,4 +1,3 @@
-import '@fontsource-variable/onest';
 import '../globals.css';
 
 import type { Metadata, Viewport } from 'next';
@@ -35,8 +34,10 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-/** Fonts for scripts Onest doesn't cover, self-hosted in /public/fonts and preloaded only where needed. */
+/** Every page uses Onest's Latin file (digits, "YouTube", ×); other files are preloaded only where needed. */
+const LATIN_FONT = '/fonts/onest-latin-var.woff2';
 const SCRIPT_FONT: Partial<Record<string, string>> = {
+  ru: '/fonts/onest-cyrillic-var.woff2',
   ur: '/fonts/noto-nastaliq-urdu-400.woff2',
   ar: '/fonts/noto-sans-arabic-var.woff2',
   hi: '/fonts/noto-sans-devanagari-var.woff2',
@@ -54,6 +55,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const path = (await headers()).get('x-playpace-path') ?? '/';
   const ga = gaMeasurementId();
   const scriptFont = SCRIPT_FONT[locale];
+  preload(LATIN_FONT, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' });
   if (scriptFont) preload(scriptFont, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' });
 
   return (

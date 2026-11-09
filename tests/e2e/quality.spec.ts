@@ -42,9 +42,41 @@ test.describe('SEO', () => {
 
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
-    expect(types).toEqual(['WebSite', 'Person', 'WebApplication', 'FAQPage']);
-    expect(ld['@graph'][3].mainEntity).toHaveLength(11);
-    expect(ld['@graph'][2].author).toEqual({ '@id': `${BASE}#author` });
+    expect(types).toEqual(['WebSite', 'Person', 'WebPage', 'WebApplication', 'FAQPage']);
+    expect(ld['@graph'][2]).toMatchObject({
+      '@id': `${BASE}#webpage`,
+      mainEntity: { '@id': `${BASE}#app` },
+      dateModified: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+    });
+    expect(ld['@graph'][3]['@id']).toBe(`${BASE}#app`);
+    expect(ld['@graph'][3].author).toEqual({ '@id': `${BASE}#author` });
+    expect(ld['@graph'][4].mainEntity).toHaveLength(11);
+
+    await expect(page.locator('meta[name="googlebot"]')).toHaveAttribute('content', /max-snippet:-1/);
+    // The Latin Onest file is preloaded so the late font swap doesn't become the LCP.
+    await expect(page.locator('link[rel="preload"][as="font"][href="/fonts/onest-latin-var.woff2"]')).toHaveCount(1);
+  });
+
+  test('inner pages have breadcrumbs that match the page language', async ({ page }) => {
+    await page.goto('/de/speed-calculator');
+    let ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+    expect(ld['@graph'].map((n: { '@type': string }) => n['@type'])).toEqual([
+      'WebSite',
+      'Person',
+      'WebPage',
+      'BreadcrumbList',
+      'WebApplication',
+      'FAQPage',
+    ]);
+    expect(ld['@graph'][3].itemListElement.map((i: { item: string }) => i.item)).toEqual([
+      `${BASE}/de`,
+      `${BASE}/de/speed-calculator`,
+    ]);
+
+    await page.goto('/privacy');
+    ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+    expect(ld['@graph'].map((n: { '@type': string }) => n['@type'])).toEqual(['WebSite', 'Person', 'WebPage', 'BreadcrumbList']);
+    expect(ld['@graph'][2].breadcrumb).toEqual({ '@id': `${BASE}/privacy#breadcrumb` });
   });
 
   test('a shared result keeps the canonical page but gets its own preview image', async ({ page }) => {
@@ -68,8 +100,12 @@ test.describe('SEO', () => {
     expect(sitemap).toContain('hreflang="x-default"');
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toContain(`Sitemap: ${BASE}/sitemap.xml`);
+    expect(sitemap).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}/);
     const manifest = await (await request.get('/manifest.webmanifest')).json();
     expect(manifest.short_name).toBe('Playpace');
+    const llms = await request.get('/llms.txt');
+    expect(llms.status()).toBe(200);
+    expect(await llms.text()).toContain('# Playpace');
   });
 
   test('share images render', async ({ request }) => {

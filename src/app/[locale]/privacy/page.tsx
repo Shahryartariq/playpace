@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { isLocale } from '@/i18n/config';
+import { isLocale, localeInfo } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
-import { pageMetadata } from '@/lib/seo';
+import { JsonLd } from '@/components/JsonLd';
+import { pageMetadata, personLd, webPageLd, websiteLd } from '@/lib/seo';
 import { REPO_URL } from '@/lib/site';
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/privacy'>): Promise<Metadata> {
@@ -25,9 +27,28 @@ export default async function PrivacyPage({ params }: PageProps<'/[locale]/priva
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const sections = dict.privacy.sections;
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
 
   return (
     <main id="main" className="container prose">
+      <JsonLd
+        nonce={nonce}
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            websiteLd(localeInfo[locale].tag),
+            personLd(),
+            ...webPageLd({
+              locale,
+              path: '/privacy',
+              name: `${dict.meta.privacyTitle} | Playpace`,
+              description: dict.meta.privacyDescription,
+              image: `/api/og?l=${locale}`,
+              trail: [[dict.meta.privacyTitle, '/privacy']],
+            }),
+          ],
+        }}
+      />
       <h1 className="hero__title">{dict.privacy.h1}</h1>
       <p className="prose__updated">{dict.privacy.updated}</p>
       <p className="hero__lead">{dict.privacy.intro}</p>
