@@ -97,7 +97,7 @@ const pt: Dictionary = {
     speedCol: 'Velocidade',
     timeCol: 'Tempo',
     savedCol: 'Você economiza',
-    timelineLabel: 'Cada bloco é um vídeo, com tamanho proporcional à duração. Os blocos destacados são os contados; a faixa encolhe quando você acelera.',
+    timelineLabel: 'Um bloco por vídeo, proporcional à duração.',
     by: 'de {channel}',
     channelUploads: 'Todos os vídeos enviados',
     openOnYouTube: 'Abrir no YouTube',
@@ -184,35 +184,20 @@ const pt: Dictionary = {
     days: { one: '{n} dia', many: '{n} de dias', other: '{n} dias' },
   },
   content: {
-    howHeading: 'Como descobrir a duração de uma playlist',
-    steps: [
-      {
-        title: 'Copie o link',
-        text: 'Abra a playlist no YouTube e copie o endereço, ou toque em Compartilhar e em Copiar link no app. Links de vídeos, de canais e do YouTube Music também funcionam.',
-      },
-      {
-        title: 'Cole e escolha',
-        text: 'Cole o link acima. Conte a lista inteira, um intervalo como os vídeos 10 a 40 ou tudo a partir do vídeo em que você está. Escolha a velocidade de reprodução.',
-      },
-      {
-        title: 'Planeje',
-        text: 'Veja o total e o tempo em cada velocidade, divida tudo em dias que caibam na sua rotina e adicione esses dias à sua agenda.',
-      },
-    ],
-    featuresHeading: 'Tudo o que você pode fazer',
-    features: [
-      { title: 'Somar listas', text: 'Cole até dez playlists, vídeos ou canais e receba um único total, numerado em ordem.' },
-      { title: 'Contar parte de uma lista', text: 'Escolha um intervalo ou comece em qualquer vídeo para ver quanto falta.' },
-      { title: 'Qualquer velocidade', text: 'Veja todas as velocidades comuns de uma vez ou digite qualquer velocidade de 0,25× a 16×.' },
-      { title: 'Plano diário', text: 'Defina os minutos por dia, pule os fins de semana se quiser e receba a data de término com os vídeos de cada dia.' },
-      { title: 'Arquivo de agenda', text: 'Baixe seu plano como arquivo .ics para o Google Agenda, o Calendário da Apple ou o Outlook.' },
-      { title: 'Lista de assistidos', text: 'Marque os vídeos conforme assiste. Seu progresso fica salvo neste navegador, sem precisar de conta.' },
-      { title: 'Canais inteiros', text: 'Cole o link de um canal para somar todos os vídeos enviados, até 5.000.' },
-      { title: 'Compartilhar e exportar', text: 'Envie um link que reabre seu resultado ou baixe todos os vídeos em CSV para o Excel ou o Sheets.' },
+    featureList: [
+      'Somar listas',
+      'Contar parte de uma lista',
+      'Qualquer velocidade',
+      'Plano diário',
+      'Arquivo de agenda',
+      'Lista de assistidos',
+      'Canais inteiros',
+      'Compartilhar e exportar',
     ],
     referenceHeading: 'Tabela rápida de velocidades',
     referenceIntro: 'Quanto duram as durações mais comuns em velocidades maiores. Divida a duração pela velocidade: 10 horas em 2× dão 5 horas.',
     referenceLength: 'Em 1×',
+    toSpeed: 'Precisa de um vídeo só?',
     faqHeading: 'Perguntas',
     faq: [
       {
@@ -327,7 +312,7 @@ const pt: Dictionary = {
     ],
   },
   footer: {
-    tagline: 'Calculadora gratuita de duração de playlist do YouTube. Sem cadastro e sem limites.',
+    tagline: 'Calculadora gratuita de duração de playlist do YouTube.',
     madeBy: 'Feito por {name}',
     source: 'Código-fonte',
     apiNote: 'O Playpace usa os Serviços de API do YouTube e não é afiliado ao YouTube ou ao Google nem endossado por eles.',

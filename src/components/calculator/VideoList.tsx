@@ -106,6 +106,14 @@ export function VideoList({ ui, f, items, selection, watched, ends, speed, onSta
       ) : null}
 
       {shown.length ? (
+        <div className="video-rows__head" aria-hidden="true">
+          <span className="video-rows__n">{ui.list.number}</span>
+          <span className="video-rows__title">{ui.list.title}</span>
+          <span className="video-rows__len">{ui.list.duration}</span>
+          <span className="video-rows__end">{ui.list.doneBy}</span>
+        </div>
+      ) : null}
+      {shown.length ? (
         <ol className="video-rows" role="list">
           {shown.map((item) => {
             const status = statusLabel(item, ui);

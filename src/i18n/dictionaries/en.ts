@@ -97,7 +97,7 @@ const en: Dictionary = {
     speedCol: 'Speed',
     timeCol: 'Time',
     savedCol: 'You save',
-    timelineLabel: 'Each block is one video, sized by its length. Bright blocks are counted; the strip shrinks as you speed up.',
+    timelineLabel: 'One block per video, sized by its length.',
     by: 'by {channel}',
     channelUploads: 'All uploads',
     openOnYouTube: 'Open on YouTube',
@@ -184,35 +184,20 @@ const en: Dictionary = {
     days: { one: '{n} day', other: '{n} days' },
   },
   content: {
-    howHeading: 'How to find a playlist’s length',
-    steps: [
-      {
-        title: 'Copy the link',
-        text: 'Open the playlist on YouTube and copy the address, or tap Share and Copy link in the app. Video, channel and YouTube Music links work too.',
-      },
-      {
-        title: 'Paste and choose',
-        text: 'Paste it above. Count the whole list, a range like videos 10 to 40, or everything from the video you’re on. Pick your playback speed.',
-      },
-      {
-        title: 'Plan it',
-        text: 'Read the total, see it at every speed, split it into days that fit your schedule and add those days to your calendar.',
-      },
-    ],
-    featuresHeading: 'Everything you can do',
-    features: [
-      { title: 'Add lists together', text: 'Paste up to ten playlists, videos or channels and get one total, numbered in order.' },
-      { title: 'Count part of a list', text: 'Choose a range, or start from any video to see how much is left.' },
-      { title: 'Any speed', text: 'See every common speed at once, or type any speed from 0.25× to 16×.' },
-      { title: 'Daily plan', text: 'Set minutes a day, skip weekends if you like, and get a finish date with each day’s videos.' },
-      { title: 'Calendar file', text: 'Download your plan as an .ics file for Google Calendar, Apple Calendar or Outlook.' },
-      { title: 'Watched list', text: 'Tick videos as you go. Your progress stays in this browser, with no account.' },
-      { title: 'Whole channels', text: 'Paste a channel link to total up every upload, up to 5,000 videos.' },
-      { title: 'Share and export', text: 'Send a link that reopens your result, or download every video as a CSV for Excel or Sheets.' },
+    featureList: [
+      'Add lists together',
+      'Count part of a list',
+      'Any speed',
+      'Daily plan',
+      'Calendar file',
+      'Watched list',
+      'Whole channels',
+      'Share and export',
     ],
     referenceHeading: 'Playback speed cheat sheet',
     referenceIntro: 'How long common lengths take at faster speeds. Divide the length by the speed: 10 hours at 2× is 5 hours.',
     referenceLength: 'At 1×',
+    toSpeed: 'Only need one video?',
     faqHeading: 'Questions',
     faq: [
       {
@@ -327,7 +312,7 @@ const en: Dictionary = {
     ],
   },
   footer: {
-    tagline: 'Free YouTube playlist length calculator. No sign-up, no limits.',
+    tagline: 'Free YouTube playlist length calculator.',
     madeBy: 'Made by {name}',
     source: 'Source code',
     apiNote: 'Playpace uses YouTube API Services and isn’t affiliated with or endorsed by YouTube or Google.',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   clampSpeed,
   combine,
@@ -17,7 +17,6 @@ import { historyStore, watchedStore, type HistoryEntry } from '@/lib/storage';
 import { estimateSeconds } from '@/lib/youtube/client';
 import { parseInput, sourceToken } from '@/lib/youtube/parse-input';
 import type { ErrorCode, ListData, Source, StreamEvent } from '@/lib/youtube/types';
-import { Results } from './Results';
 import type { Ui } from './types';
 import { useFormat } from './useFormat';
 
@@ -30,6 +29,10 @@ interface Props {
 }
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
+
+/** The results panels are only needed after a lookup, so their code loads then (started as soon as a lookup starts). */
+const loadResults = () => import('./Results');
+const Results = lazy(() => loadResults().then((m) => ({ default: m.Results })));
 
 interface Progress {
   list: number;
@@ -140,6 +143,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
         setError(ui.errors.empty);
         return;
       }
+      void loadResults();
       if (!parsed.sources.length) {
         const reason = parsed.rejected[0]?.reason;
         setStatus('error');
@@ -217,13 +221,19 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
       };
       historyStore.write([entry, ...historyStore.read().filter((h) => h.q !== entry.q)].slice(0, 8));
 
-      requestAnimationFrame(() => {
+      // The results code may still be arriving, so wait (up to ~1 s) for the heading to exist.
+      let frames = 0;
+      const reveal = () => {
         const heading = resultsRef.current;
-        if (!heading) return;
+        if (!heading) {
+          if (frames++ < 60) requestAnimationFrame(reveal);
+          return;
+        }
         heading.focus({ preventScroll: true });
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         heading.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      });
+      };
+      requestAnimationFrame(reveal);
     },
     [errorMessage, f, ui],
   );
@@ -451,7 +461,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
                   className="number-input"
                   aria-label={ui.form.customSpeed}
                 />
-                <span aria-hidden="true">×</span>
+                <span className="custom-speed__unit" aria-hidden="true">×</span>
               </label>
             </div>
           </fieldset>
@@ -520,24 +530,26 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
       </form>
 
       {status === 'done' && lists.length ? (
-        <Results
-          ui={ui}
-          f={f}
-          lists={lists}
-          items={items}
-          selection={selection}
-          totals={totals}
-          watched={watched}
-          speed={speed}
-          notices={notices}
-          query={query}
-          headingRef={resultsRef}
-          onSpeed={pickSpeed}
-          onStartHere={(n) => {
-            setMode('from');
-            setFrom(String(n));
-          }}
-        />
+        <Suspense fallback={null}>
+          <Results
+            ui={ui}
+            f={f}
+            lists={lists}
+            items={items}
+            selection={selection}
+            totals={totals}
+            watched={watched}
+            speed={speed}
+            notices={notices}
+            query={query}
+            headingRef={resultsRef}
+            onSpeed={pickSpeed}
+            onStartHere={(n) => {
+              setMode('from');
+              setFrom(String(n));
+            }}
+          />
+        </Suspense>
       ) : null}
     </div>
   );

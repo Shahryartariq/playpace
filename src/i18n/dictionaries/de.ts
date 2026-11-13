@@ -97,7 +97,7 @@ const de: Dictionary = {
     speedCol: 'Tempo',
     timeCol: 'Dauer',
     savedCol: 'Ersparnis',
-    timelineLabel: 'Jeder Block ist ein Video, seine Breite entspricht der Länge. Helle Blöcke werden gezählt; der Streifen wird kürzer, je schneller du schaust.',
+    timelineLabel: 'Ein Block pro Video, so breit wie seine Länge.',
     by: 'von {channel}',
     channelUploads: 'Alle Uploads',
     openOnYouTube: 'Auf YouTube öffnen',
@@ -184,35 +184,20 @@ const de: Dictionary = {
     days: { one: '{n} Tag', other: '{n} Tage' },
   },
   content: {
-    howHeading: 'So findest du die Länge einer Playlist',
-    steps: [
-      {
-        title: 'Link kopieren',
-        text: 'Öffne die Playlist auf YouTube und kopiere die Adresse, oder tippe in der App auf „Teilen“ und „Link kopieren“. Links zu Videos, Kanälen und YouTube Music funktionieren auch.',
-      },
-      {
-        title: 'Einfügen und auswählen',
-        text: 'Füge den Link oben ein. Zähle die ganze Liste, einen Bereich wie Video 10 bis 40 oder alles ab dem Video, bei dem du gerade bist. Wähle deine Wiedergabegeschwindigkeit.',
-      },
-      {
-        title: 'Planen',
-        text: 'Lies die Gesamtdauer ab, sieh sie bei jedem Tempo, teile sie in Tage auf, die zu deinem Alltag passen, und trag diese Tage in deinen Kalender ein.',
-      },
-    ],
-    featuresHeading: 'Das kannst du alles tun',
-    features: [
-      { title: 'Listen zusammenrechnen', text: 'Füge bis zu zehn Playlists, Videos oder Kanäle ein und erhalte eine Gesamtdauer, der Reihe nach nummeriert.' },
-      { title: 'Teil einer Liste zählen', text: 'Wähle einen Bereich oder beginne bei einem beliebigen Video, um zu sehen, wie viel noch übrig ist.' },
-      { title: 'Jedes Tempo', text: 'Sieh alle gängigen Geschwindigkeiten auf einmal oder gib ein beliebiges Tempo von 0,25× bis 16× ein.' },
-      { title: 'Tagesplan', text: 'Leg fest, wie viele Minuten du pro Tag schaust, lass Wochenenden aus, wenn du willst, und erhalte ein Enddatum mit den Videos für jeden Tag.' },
-      { title: 'Kalenderdatei', text: 'Lade deinen Plan als .ics-Datei für Google Kalender, Apple Kalender oder Outlook herunter.' },
-      { title: 'Angesehen-Liste', text: 'Hake Videos ab, während du schaust. Dein Fortschritt bleibt in diesem Browser gespeichert, ganz ohne Konto.' },
-      { title: 'Ganze Kanäle', text: 'Füge einen Kanal-Link ein, um alle Uploads zusammenzurechnen, bis zu 5.000 Videos.' },
-      { title: 'Teilen und exportieren', text: 'Verschicke einen Link, der dein Ergebnis wieder öffnet, oder lade alle Videos als CSV für Excel oder Sheets herunter.' },
+    featureList: [
+      'Listen zusammenrechnen',
+      'Teil einer Liste zählen',
+      'Jedes Tempo',
+      'Tagesplan',
+      'Kalenderdatei',
+      'Angesehen-Liste',
+      'Ganze Kanäle',
+      'Teilen und exportieren',
     ],
     referenceHeading: 'Spickzettel zur Wiedergabegeschwindigkeit',
     referenceIntro: 'Wie lange gängige Längen bei höherem Tempo dauern. Teile die Länge durch das Tempo: 10 Stunden bei 2× sind 5 Stunden.',
     referenceLength: 'Bei 1×',
+    toSpeed: 'Nur ein Video?',
     faqHeading: 'Fragen',
     faq: [
       {
@@ -327,7 +312,7 @@ const de: Dictionary = {
     ],
   },
   footer: {
-    tagline: 'Kostenloser YouTube-Playlist-Längenrechner. Ohne Anmeldung, ohne Limits.',
+    tagline: 'Kostenloser YouTube-Playlist-Längenrechner.',
     madeBy: 'Erstellt von {name}',
     source: 'Quellcode',
     apiNote: 'Playpace nutzt die YouTube API Services und ist weder mit YouTube noch mit Google verbunden oder von ihnen empfohlen.',

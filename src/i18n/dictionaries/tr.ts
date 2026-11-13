@@ -97,7 +97,7 @@ const tr: Dictionary = {
     speedCol: 'Hız',
     timeCol: 'Süre',
     savedCol: 'Kazancınız',
-    timelineLabel: 'Her blok bir videodur ve boyutu videonun süresine göredir. Parlak bloklar sayılan videolardır; hızı artırdıkça şerit kısalır.',
+    timelineLabel: 'Her blok bir video; genişliği süresine göre.',
     by: 'Kanal: {channel}',
     channelUploads: 'Tüm yüklemeler',
     openOnYouTube: 'YouTube’da aç',
@@ -184,35 +184,20 @@ const tr: Dictionary = {
     days: { one: '{n} gün', other: '{n} gün' },
   },
   content: {
-    howHeading: 'Bir oynatma listesinin süresi nasıl bulunur',
-    steps: [
-      {
-        title: 'Bağlantıyı kopyalayın',
-        text: 'Oynatma listesini YouTube’da açıp adresi kopyalayın ya da uygulamada Paylaş’a ve ardından Bağlantıyı kopyala’ya dokunun. Video, kanal ve YouTube Music bağlantıları da çalışır.',
-      },
-      {
-        title: 'Yapıştırın ve seçin',
-        text: 'Bağlantıyı yukarıya yapıştırın. Tüm listeyi, 10 ile 40. videolar arası gibi bir aralığı ya da izlediğiniz videodan sonrasını sayın. Oynatma hızınızı seçin.',
-      },
-      {
-        title: 'Planlayın',
-        text: 'Toplam süreyi okuyun, her hızda ne kadar sürdüğünü görün, programınıza uyan günlere bölün ve bu günleri takviminize ekleyin.',
-      },
-    ],
-    featuresHeading: 'Neler yapabilirsiniz',
-    features: [
-      { title: 'Listeleri toplayın', text: 'En fazla on oynatma listesi, video ya da kanal yapıştırın; sırayla numaralandırılmış tek bir toplam alın.' },
-      { title: 'Listenin bir kısmını sayın', text: 'Bir aralık seçin ya da ne kadar kaldığını görmek için herhangi bir videodan başlayın.' },
-      { title: 'Her hız', text: 'Yaygın hızların hepsini bir arada görün ya da 0,25× ile 16× arasında istediğiniz hızı yazın.' },
-      { title: 'Günlük plan', text: 'Günde kaç dakika izleyeceğinizi belirleyin, isterseniz hafta sonlarını atlayın; her günün videolarıyla birlikte bitiş tarihini görün.' },
-      { title: 'Takvim dosyası', text: 'Planınızı Google Takvim, Apple Takvim veya Outlook için .ics dosyası olarak indirin.' },
-      { title: 'İzlenenler listesi', text: 'İzledikçe videoları işaretleyin. İlerlemeniz hesap gerekmeden bu tarayıcıda kalır.' },
-      { title: 'Bütün kanallar', text: 'Bir kanal bağlantısı yapıştırarak 5.000 videoya kadar tüm yüklemelerin toplam süresini görün.' },
-      { title: 'Paylaşın ve dışa aktarın', text: 'Sonucunuzu yeniden açan bir bağlantı gönderin ya da tüm videoları Excel veya Sheets için CSV olarak indirin.' },
+    featureList: [
+      'Listeleri toplayın',
+      'Listenin bir kısmını sayın',
+      'Her hız',
+      'Günlük plan',
+      'Takvim dosyası',
+      'İzlenenler listesi',
+      'Bütün kanallar',
+      'Paylaşın ve dışa aktarın',
     ],
     referenceHeading: 'Oynatma hızı tablosu',
     referenceIntro: 'Yaygın sürelerin daha yüksek hızlarda ne kadar tuttuğu. Süreyi hıza bölün: 2× hızda 10 saat, 5 saat sürer.',
     referenceLength: '1× hızda',
+    toSpeed: 'Yalnızca tek bir video mu?',
     faqHeading: 'Sorular',
     faq: [
       {
@@ -327,7 +312,7 @@ const tr: Dictionary = {
     ],
   },
   footer: {
-    tagline: 'Ücretsiz YouTube oynatma listesi süresi hesaplayıcı. Kayıt yok, sınır yok.',
+    tagline: 'Ücretsiz YouTube oynatma listesi süresi hesaplayıcı.',
     madeBy: 'Yapan: {name}',
     source: 'Kaynak kodu',
     apiNote: 'Playpace, YouTube API Hizmetlerini kullanır; YouTube veya Google ile bağlantılı değildir ve onlar tarafından onaylanmamıştır.',

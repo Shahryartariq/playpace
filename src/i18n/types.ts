@@ -13,11 +13,6 @@ export interface QA {
   a: string;
 }
 
-export interface TitledText {
-  title: string;
-  text: string;
-}
-
 export interface Dictionary {
   meta: {
     /** <title> of the home page, about 60 characters. */
@@ -245,13 +240,13 @@ export interface Dictionary {
     days: Plural;
   };
   content: {
-    howHeading: string;
-    steps: TitledText[];
-    featuresHeading: string;
-    features: TitledText[];
+    /** Short feature names, used only in structured data (WebApplication featureList). */
+    featureList: string[];
     referenceHeading: string;
     referenceIntro: string;
     referenceLength: string;
+    /** Followed by a link to the video speed calculator. */
+    toSpeed: string;
     faqHeading: string;
     faq: QA[];
   };
