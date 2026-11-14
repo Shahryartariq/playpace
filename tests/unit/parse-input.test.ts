@@ -85,3 +85,13 @@ describe('tokens', () => {
     }
   });
 });
+
+describe('more than 10 links', () => {
+  it('counts the first 10 and says how many were left out', () => {
+    const links = Array.from({ length: 13 }, (_, i) => `https://youtu.be/abcdefghi${String(i).padStart(2, '0')}`).join('\n');
+    const parsed = parseInput(links);
+    expect(parsed.sources).toHaveLength(10);
+    expect(parsed.dropped).toBe(3);
+    expect(parseInput('https://youtu.be/abcdefghi01').dropped).toBeUndefined();
+  });
+});

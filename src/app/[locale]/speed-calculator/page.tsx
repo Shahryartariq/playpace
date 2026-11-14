@@ -82,6 +82,7 @@ export default async function SpeedPage({ params }: PageProps<'/[locale]/speed-c
         <h1 className="hero__title">{dict.speedPage.h1}</h1>
         <p className="hero__lead">{dict.speedPage.lead}</p>
         <SpeedConverter
+          homeHref={localePath(locale, '/')}
           t={dict.speedPage}
           fit={dict.fit}
           results={{ speedCol: dict.results.speedCol, timeCol: dict.results.timeCol, savedCol: dict.results.savedCol }}

@@ -77,6 +77,7 @@ const id: Dictionary = {
     invalid_input: 'Link itu tidak dapat dibaca. Periksa, lalu coba lagi.',
     network: 'Koneksi terputus. Periksa internet Anda, lalu coba lagi.',
     partial: '“{title}” tidak dapat dibaca, jadi tidak ikut dihitung.',
+    tooMany: 'Hanya {n} tautan pertama yang dihitung.',
   },
   results: {
     heading: 'Hasil',
@@ -250,6 +251,9 @@ const id: Dictionary = {
     h1: 'Kalkulator kecepatan video',
     lead: 'Masukkan durasi video untuk melihat lamanya di setiap kecepatan putar, atau cari kecepatan yang Anda perlukan agar muat dalam waktu yang Anda punya.',
     lengthLegend: 'Durasi video',
+    linkLabel: 'Tempel tautan video',
+    linkButton: 'Ambil durasi',
+    linkFailed: 'Durasi video itu tidak bisa diambil. Periksa tautannya lalu coba lagi.',
     hours: 'Jam',
     minutes: 'Menit',
     seconds: 'Detik',

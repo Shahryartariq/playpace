@@ -204,7 +204,8 @@ async function fetchItems(playlistId: string, meta: ListMeta, opts: FetchOptions
   const limit = Math.max(1, opts.concurrency ?? 4);
   let running = 0;
   const waiters: (() => void)[] = [];
-  const total = Math.min(meta.itemCount || MAX_ITEMS, MAX_ITEMS);
+  // 0 when YouTube doesn't say how big the list is: the page then shows only how many have loaded.
+  const total = Math.min(meta.itemCount, MAX_ITEMS);
   let loaded = 0;
   let pageToken: string | undefined;
   let truncated = false;
@@ -265,7 +266,7 @@ async function fetchItems(playlistId: string, meta: ListMeta, opts: FetchOptions
               videos[start + i] = toVideo(item.id, item.title, item.owner, found.get(item.id));
             });
             loaded += slice.length;
-            opts.onProgress?.(loaded, Math.max(total, loaded));
+            opts.onProgress?.(loaded, total ? Math.max(total, loaded) : 0);
           })
           .catch(fail)
           .finally(release),

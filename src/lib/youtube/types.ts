@@ -14,6 +14,8 @@ export interface ParsedInput {
   rejected: { text: string; reason: UnsupportedReason }[];
   /** `index=` from a watch link that's inside a playlist (1-based), when there is exactly one source. */
   startIndex?: number;
+  /** How many valid links were left out because only MAX_SOURCES are counted. */
+  dropped?: number;
 }
 
 export type VideoStatus = 'live' | 'private' | 'deleted' | 'unavailable';

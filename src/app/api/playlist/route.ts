@@ -21,11 +21,14 @@ const STATUS: Record<ErrorCode, number> = {
   config: 500,
 };
 
+/** Only Playpace's own pages may use this endpoint from a browser. */
+const PRIVATE = { 'cross-origin-resource-policy': 'same-origin' } as const;
+
 function errorResponse(code: ErrorCode): Response {
   const body: StreamEvent = { type: 'error', code };
   return new Response(`${JSON.stringify(body)}\n`, {
     status: STATUS[code],
-    headers: { 'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store' },
+    headers: { 'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store', ...PRIVATE },
   });
 }
 
@@ -35,6 +38,10 @@ function errorResponse(code: ErrorCode): Response {
  * with every video, or a single `error` line.
  */
 export async function GET(request: Request): Promise<Response> {
+  // Another site's page calling this from its visitors' browsers would spend Playpace's YouTube quota.
+  if (request.headers.get('sec-fetch-site') === 'cross-site') {
+    return new Response(null, { status: 403, headers: { 'cache-control': 'no-store', ...PRIVATE } });
+  }
   const url = new URL(request.url);
   const source = parseToken(url.searchParams.get('src') ?? '');
   if (!source) return errorResponse('invalid_input');
@@ -97,6 +104,7 @@ export async function GET(request: Request): Promise<Response> {
       'x-content-type-options': 'nosniff',
       // Ask proxies not to buffer, so progress lines arrive as they're written.
       'x-accel-buffering': 'no',
+      ...PRIVATE,
     },
   });
 }

@@ -77,6 +77,7 @@ const pt: Dictionary = {
     invalid_input: 'Não foi possível ler esse link. Confira e tente de novo.',
     network: 'A conexão caiu. Verifique sua internet e tente de novo.',
     partial: 'Não foi possível ler “{title}”, então essa lista ficou de fora.',
+    tooMany: 'Só os primeiros {n} links são contados.',
   },
   results: {
     heading: 'Resultados',
@@ -250,6 +251,9 @@ const pt: Dictionary = {
     h1: 'Calculadora de velocidade de vídeo',
     lead: 'Informe a duração de um vídeo para ver quanto tempo ele leva em cada velocidade de reprodução, ou descubra a velocidade necessária para caber no tempo que você tem.',
     lengthLegend: 'Duração do vídeo',
+    linkLabel: 'Cole o link de um vídeo',
+    linkButton: 'Pegar duração',
+    linkFailed: 'Não foi possível obter a duração desse vídeo. Confira o link e tente de novo.',
     hours: 'Horas',
     minutes: 'Minutos',
     seconds: 'Segundos',
