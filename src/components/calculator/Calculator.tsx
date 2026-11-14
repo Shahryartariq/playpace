@@ -15,7 +15,7 @@ import { fill } from '@/lib/format';
 import { readShareQuery, shareQuery, sourceToLink, type ShareState } from '@/lib/share';
 import { historyStore, watchedStore, type HistoryEntry } from '@/lib/storage';
 import { estimateSeconds } from '@/lib/youtube/client';
-import { parseInput, sourceToken } from '@/lib/youtube/parse-input';
+import { MAX_SOURCES, parseInput, sourceToken } from '@/lib/youtube/parse-input';
 import type { ErrorCode, ListData, Source, StreamEvent } from '@/lib/youtube/types';
 import type { Ui } from './types';
 import { useFormat } from './useFormat';
@@ -110,6 +110,8 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
   const [sources, setSources] = useState<Source[]>([]);
 
   const abortRef = useRef<AbortController | null>(null);
+  /** True while "From video N" was set by a link's &index= rather than chosen by the person. */
+  const autoFrom = useRef(false);
   const resultsRef = useRef<HTMLHeadingElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -153,10 +155,17 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
       for (const r of parsed.rejected) {
         pending.push(r.reason === 'unknown' ? fill(ui.errors.unknown, { text: r.text }) : ui.errors[r.reason]);
       }
+      if (parsed.dropped) pending.push(fill(ui.errors.tooMany, { n: f.int(MAX_SOURCES) }));
       if (parsed.startIndex && !preset?.selection) {
         setMode('from');
         setFrom(String(parsed.startIndex));
+        autoFrom.current = true;
         pending.push(fill(ui.form.startIndexNote, { n: f.int(parsed.startIndex) }));
+      } else if (autoFrom.current && !preset?.selection) {
+        // "From video N" came from the previous link's &index=, not from the person: don't carry it over.
+        setMode('all');
+        setFrom('1');
+        autoFrom.current = false;
       }
 
       const controller = new AbortController();
@@ -266,8 +275,15 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
     [sources, selection, speed],
   );
 
-  // The address bar is left alone on purpose: rewriting it to ?q=… after results appear makes
-  // Malwarebytes Browser Guard block the page. Share and copy links carry the result instead.
+  // Keep the address bar in step with the result, so refresh, Back and bookmarks reopen it.
+  // (Malwarebytes Browser Guard's block was caused by SVG <title> tooltips, fixed in PR #4, not by this.)
+  useEffect(() => {
+    if (status !== 'done' || !query) return;
+    const next = `${window.location.pathname}?${query}${window.location.hash}`;
+    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
+      window.history.replaceState(window.history.state, '', next);
+    }
+  }, [status, query]);
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -304,6 +320,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
   const runExample = (link: string) => {
     setInput(link);
     setMode('all');
+    autoFrom.current = false;
     void calculate(link, { selection: { mode: 'all', from: 1, to: 0 } });
   };
 
@@ -401,7 +418,10 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
                     name="mode"
                     value={value}
                     checked={mode === value}
-                    onChange={() => setMode(value)}
+                    onChange={() => {
+                      autoFrom.current = false;
+                      setMode(value);
+                    }}
                   />
                   <span>{label}</span>
                 </label>
@@ -416,7 +436,10 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
                     inputMode="numeric"
                     min={1}
                     value={from}
-                    onChange={(e) => setFrom(e.target.value)}
+                    onChange={(e) => {
+                      autoFrom.current = false;
+                      setFrom(e.target.value);
+                    }}
                     className="number-input"
                   />
                 </label>
@@ -490,6 +513,8 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
                     ? `, ${fill(ui.progress.estimate, { seconds: f.int(progress.estimate) })}`
                     : ''}
                 </span>
+              ) : progress.loaded ? (
+                <span className="progress__count">{f.count(ui.plurals.videos, progress.loaded)}</span>
               ) : null}
             </div>
             <progress
@@ -545,6 +570,7 @@ export function Calculator({ ui, tag, examples, initial }: Props) {
             headingRef={resultsRef}
             onSpeed={pickSpeed}
             onStartHere={(n) => {
+              autoFrom.current = false;
               setMode('from');
               setFrom(String(n));
             }}

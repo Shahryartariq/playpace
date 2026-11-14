@@ -14,8 +14,8 @@ test.describe('calculator', () => {
     await expect(page.getByText('1 live stream or premiere not counted')).toBeVisible();
     await expect(page.locator('.list-card__title')).toHaveText('Full-stack web development, complete course');
     await expect(page.locator('.video-row')).toHaveCount(36);
-    // The address bar stays put (Browser Guard blocks pages that rewrite it); share links carry the result.
-    await expect(page).toHaveURL(/\/$/);
+    // The address carries the result, so refresh, Back and bookmarks reopen it.
+    await expect(page).toHaveURL(/\/\?q=p%3APLplaypaceSampleCourse01$/);
     await expect(page.getByRole('link', { name: 'Share: WhatsApp' })).toHaveAttribute('href', /q%3Dp%253APLplaypaceSampleCourse01/);
     expect(problems).toEqual([]);
   });
@@ -320,4 +320,61 @@ test('the results page reads well on any screen', async ({ page, isMobile }) => 
     // Desktop labels the columns, including when each video is done.
     await expect(page.locator('.video-rows__head')).toContainText('Done after');
   }
+});
+
+test.describe('flows found in the second audit', () => {
+  test('a refresh keeps the result, with its range and speed', async ({ page }) => {
+    await page.goto('/');
+    await calculate(page, COURSE);
+    await page.locator('.speed-chips').first().getByText('2×', { exact: true }).click();
+    await expect(page).toHaveURL(/s=2/);
+    await page.reload();
+    await expect(page.locator('.summary__label')).toHaveText('At 2×');
+    await expect(page.locator('.summary__scope')).toHaveText('Whole list, 33 videos');
+  });
+
+  test('switching language keeps the calculation', async ({ page }) => {
+    await page.goto('/');
+    await calculate(page, COURSE);
+    await expect(page).toHaveURL(/q=/);
+    await page.locator('.site-footer__langs a[hreflang="es"]').click();
+    await expect(page).toHaveURL(/\/es\?q=p%3APLplaypaceSampleCourse01/);
+    await expect(page.locator('.summary')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  });
+
+  test('a start position from one link does not stick to the next one', async ({ page }) => {
+    await page.goto('/');
+    await calculate(page, `${COURSE}&index=5`);
+    await expect(page.locator('.summary__scope')).toContainText('From video 5');
+    await calculate(page, MUSIC);
+    await expect(page.locator('.summary__scope')).toHaveText(/^Whole list/);
+  });
+
+  test('more than 10 links says only 10 are counted', async ({ page }) => {
+    await page.goto('/');
+    const links = Array.from({ length: 12 }, (_, i) => `https://youtu.be/abcdefghi${String(i).padStart(2, '0')}`).join('\n');
+    await calculate(page, links);
+    await expect(page.getByText('Only the first 10 links are counted.')).toBeVisible();
+  });
+
+  test('the speed page reads a video link, and sends playlists to the calculator', async ({ page }) => {
+    await page.goto('/speed-calculator');
+    const link = page.getByLabel('Paste a video link');
+    await link.fill('https://youtu.be/abcdefghi01');
+    await page.getByRole('button', { name: 'Get length' }).click();
+    const form = page.locator('.converter__form');
+    await expect(form.getByLabel('Hours', { exact: true })).toHaveValue('0');
+    await expect(form.getByLabel('Minutes', { exact: true })).toHaveValue('20');
+    await expect(form.getByLabel('Seconds', { exact: true })).toHaveValue('34');
+
+    await link.fill('not a link');
+    await page.getByRole('button', { name: 'Get length' }).click();
+    await expect(page.locator('.converter__link').getByRole('alert')).toHaveText(/Couldn’t get that video’s length/);
+
+    await link.fill(COURSE);
+    await page.getByRole('button', { name: 'Get length' }).click();
+    await expect(page).toHaveURL(/\/\?q=p%3APLplaypaceSampleCourse01&s=1\.5/);
+    await expect(page.locator('.summary__label')).toHaveText('At 1.5×');
+  });
 });

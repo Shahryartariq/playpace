@@ -151,6 +151,10 @@ test.describe('security', () => {
     }
     const ok = await request.get('/api/playlist?src=p%3APLplaypaceSampleMusic001');
     expect(ok.headers()['cache-control']).toBe('no-store');
+    expect(ok.headers()['cross-origin-resource-policy']).toBe('same-origin');
+    // Another site's page can't spend Playpace's YouTube quota through its visitors' browsers.
+    const cross = await request.get('/api/playlist?src=p%3APLplaypaceSampleMusic001', { headers: { 'sec-fetch-site': 'cross-site' } });
+    expect(cross.status()).toBe(403);
     const lines = (await ok.text()).trim().split('\n').map((l) => JSON.parse(l));
     expect(lines[0].type).toBe('meta');
     expect(lines.at(-1).type).toBe('done');

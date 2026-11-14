@@ -46,7 +46,12 @@ export function resetRateLimits(): void {
 }
 
 export function clientIp(headers: Headers): string {
-  const ip = headers.get('x-real-ip') ?? headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  // Vercel sets x-vercel-forwarded-for and x-real-ip itself (clients can't spoof them there).
+  const ip =
+    headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
+    headers.get('x-real-ip') ||
+    headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    'unknown';
   // IPv6 users can rotate through a whole /64; count the network, not the address.
   return ip.includes(':') ? ip.split(':').slice(0, 4).join(':') : ip;
 }

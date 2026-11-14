@@ -77,6 +77,7 @@ const en: Dictionary = {
     invalid_input: 'That link couldn’t be read. Check it and try again.',
     network: 'The connection dropped. Check your internet and try again.',
     partial: '“{title}” couldn’t be read, so it isn’t included.',
+    tooMany: 'Only the first {n} links are counted.',
   },
   results: {
     heading: 'Results',
@@ -250,6 +251,9 @@ const en: Dictionary = {
     h1: 'Video speed calculator',
     lead: 'Enter a video’s length to see how long it takes at every playback speed, or find the speed you need to fit it into the time you have.',
     lengthLegend: 'Video length',
+    linkLabel: 'Paste a video link',
+    linkButton: 'Get length',
+    linkFailed: 'Couldn’t get that video’s length. Check the link and try again.',
     hours: 'Hours',
     minutes: 'Minutes',
     seconds: 'Seconds',
