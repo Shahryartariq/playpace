@@ -217,3 +217,18 @@ describe('fetchSource', () => {
     expect(estimateSeconds(5000)).toBeGreaterThan(15);
   });
 });
+
+describe('progress when YouTube does not report a size', () => {
+  it('reports 0 as the total instead of guessing 5,000', async () => {
+    const base = fakeYouTube(60);
+    const { fetch } = mockFetch((url) => {
+      const res = base(url);
+      if (url.pathname.endsWith('/playlists')) return { body: { items: [{ id: url.searchParams.get('id'), snippet: { title: 'X' } }] } };
+      return res;
+    });
+    const totals: number[] = [];
+    await fetchSource({ kind: 'playlist', id: 'PLtest0000000000' }, { apiKey: 'k', fetch, onProgress: (_, total) => totals.push(total) });
+    expect(totals.length).toBeGreaterThan(0);
+    expect(totals.every((t) => t === 0)).toBe(true);
+  });
+});

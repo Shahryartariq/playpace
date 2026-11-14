@@ -77,6 +77,7 @@ const tr: Dictionary = {
     invalid_input: 'Bu bağlantı okunamadı. Kontrol edip tekrar deneyin.',
     network: 'Bağlantı kesildi. İnternetinizi kontrol edip tekrar deneyin.',
     partial: '“{title}” okunamadığı için toplama dahil edilmedi.',
+    tooMany: 'Yalnızca ilk {n} bağlantı sayılır.',
   },
   results: {
     heading: 'Sonuçlar',
@@ -250,6 +251,9 @@ const tr: Dictionary = {
     h1: 'Video hız hesaplayıcı',
     lead: 'Bir videonun süresini girerek her oynatma hızında ne kadar sürdüğünü görün ya da elinizdeki zamana sığdırmak için gereken hızı bulun.',
     lengthLegend: 'Video süresi',
+    linkLabel: 'Bir video bağlantısı yapıştırın',
+    linkButton: 'Süreyi getir',
+    linkFailed: 'Bu videonun süresi alınamadı. Bağlantıyı kontrol edip tekrar deneyin.',
     hours: 'Saat',
     minutes: 'Dakika',
     seconds: 'Saniye',

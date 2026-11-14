@@ -99,6 +99,8 @@ export interface Dictionary {
     network: string;
     /** {title}: a list that failed while others loaded. */
     partial: string;
+    /** {n} */
+    tooMany: string;
   };
   results: {
     heading: string;
@@ -254,6 +256,9 @@ export interface Dictionary {
     h1: string;
     lead: string;
     lengthLegend: string;
+    linkLabel: string;
+    linkButton: string;
+    linkFailed: string;
     hours: string;
     minutes: string;
     seconds: string;

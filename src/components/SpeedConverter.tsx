@@ -1,9 +1,13 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { atSpeed, clampSpeed, SPEED_PRESETS } from '@/lib/calc';
 import type { Dictionary } from '@/i18n/types';
 import { fill, formatDuration, formatSpeed } from '@/lib/format';
+import { shareQuery } from '@/lib/share';
+import { parseInput, sourceToken } from '@/lib/youtube/parse-input';
+import type { StreamEvent } from '@/lib/youtube/types';
 import { TimeFit } from './TimeFit';
 
 interface Props {
@@ -12,6 +16,8 @@ interface Props {
   results: Pick<Dictionary['results'], 'speedCol' | 'timeCol' | 'savedCol'>;
   units: Dictionary['units'];
   tag: string;
+  /** The playlist calculator in this language, for playlist and channel links. */
+  homeHref: string;
 }
 
 const int = (v: string) => {
@@ -20,11 +26,47 @@ const int = (v: string) => {
 };
 
 /** Length × speed for a single video, plus the speed needed to fit it into the time you have. */
-export function SpeedConverter({ t, fit, results, units, tag }: Props) {
+export function SpeedConverter({ t, fit, results, units, tag, homeHref }: Props) {
   const [h, setH] = useState('1');
   const [m, setM] = useState('0');
   const [s, setS] = useState('0');
   const [speed, setSpeed] = useState('1.5');
+  const router = useRouter();
+  const [link, setLink] = useState('');
+  const [linkState, setLinkState] = useState<'idle' | 'loading' | 'error'>('idle');
+
+  /** Fills the length from a video link; a playlist or channel link opens the playlist calculator. */
+  const readLink = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const parsed = parseInput(link);
+    const source = parsed.sources[0];
+    if (!source) {
+      setLinkState('error');
+      return;
+    }
+    if (source.kind !== 'video') {
+      const speedNow = clampSpeed(Number.parseFloat(speed.replace(',', '.')) || 1);
+      router.push(`${homeHref}?${shareQuery({ sources: parsed.sources, selection: { mode: 'all', from: 1, to: 0 }, speed: speedNow })}`);
+      return;
+    }
+    setLinkState('loading');
+    try {
+      const res = await fetch(`/api/playlist?src=${encodeURIComponent(sourceToken(source))}`);
+      const events = (await res.text())
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => JSON.parse(line) as StreamEvent);
+      const done = events.find((e) => e.type === 'done');
+      const video = done?.type === 'done' ? done.data.videos[0] : undefined;
+      if (!video || !video.d) throw new Error('no length');
+      setH(String(Math.floor(video.d / 3600)));
+      setM(String(Math.floor((video.d % 3600) / 60)));
+      setS(String(video.d % 60));
+      setLinkState('idle');
+    } catch {
+      setLinkState('error');
+    }
+  };
 
   const seconds = int(h) * 3600 + int(m) * 60 + int(s);
   const speedValue = clampSpeed(Number.parseFloat(speed.replace(',', '.')) || 1);
@@ -33,6 +75,37 @@ export function SpeedConverter({ t, fit, results, units, tag }: Props) {
 
   return (
     <div className="panel converter">
+      <form className="converter__link" onSubmit={readLink}>
+        <label className="field">
+          <span className="field__label">{t.linkLabel}</span>
+          <span className="converter__link-row">
+            <input
+              type="text"
+              inputMode="url"
+              autoComplete="off"
+              spellCheck={false}
+              className="text-input"
+              placeholder="https://www.youtube.com/watch?v=…"
+              value={link}
+              onChange={(e) => {
+                setLink(e.target.value);
+                if (linkState === 'error') setLinkState('idle');
+              }}
+              aria-invalid={linkState === 'error' || undefined}
+              aria-describedby={linkState === 'error' ? 'converter-link-error' : undefined}
+            />
+            <button type="submit" className="button button--secondary" disabled={!link.trim() || linkState === 'loading'}>
+              {t.linkButton}
+            </button>
+          </span>
+        </label>
+        {linkState === 'error' ? (
+          <p id="converter-link-error" className="alert alert--error" role="alert">
+            {t.linkFailed}
+          </p>
+        ) : null}
+      </form>
+
       <form className="converter__form" onSubmit={(e) => e.preventDefault()}>
         <fieldset className="field">
           <legend className="field__label">{t.lengthLegend}</legend>
