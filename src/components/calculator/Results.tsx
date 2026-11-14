@@ -80,7 +80,7 @@ export function Results(props: Props) {
             <li key={l.meta.token} className="list-card">
               {l.meta.thumb ? (
                 // eslint-disable-next-line @next/next/no-img-element -- YouTube thumbnails, already sized by YouTube.
-                <img src={l.meta.thumb} alt="" width={120} height={68} loading="lazy" className="list-card__thumb" />
+                <img src={l.meta.thumb} alt="" width={120} height={68} loading="lazy" decoding="async" className="list-card__thumb" />
               ) : (
                 <span className="list-card__thumb list-card__thumb--empty" aria-hidden="true" />
               )}

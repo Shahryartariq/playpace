@@ -77,6 +77,7 @@ const de: Dictionary = {
     invalid_input: 'Dieser Link konnte nicht gelesen werden. Prüfe ihn und versuch es noch einmal.',
     network: 'Die Verbindung wurde unterbrochen. Prüfe deine Internetverbindung und versuch es noch einmal.',
     partial: '„{title}“ konnte nicht gelesen werden und ist daher nicht enthalten.',
+    tooMany: 'Nur die ersten {n} Links werden gezählt.',
   },
   results: {
     heading: 'Ergebnisse',
@@ -250,6 +251,9 @@ const de: Dictionary = {
     h1: 'Video-Geschwindigkeitsrechner',
     lead: 'Gib die Länge eines Videos ein, um zu sehen, wie lange es bei jeder Wiedergabegeschwindigkeit dauert, oder finde das Tempo, mit dem es in deine verfügbare Zeit passt.',
     lengthLegend: 'Videolänge',
+    linkLabel: 'Füge einen Videolink ein',
+    linkButton: 'Länge holen',
+    linkFailed: 'Die Länge dieses Videos konnte nicht geladen werden. Prüfe den Link und versuche es erneut.',
     hours: 'Stunden',
     minutes: 'Minuten',
     seconds: 'Sekunden',

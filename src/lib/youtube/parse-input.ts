@@ -170,6 +170,7 @@ export function parseInput(text: string): ParsedInput {
   }
 
   const parsed: ParsedInput = { sources: sources.slice(0, MAX_SOURCES), rejected };
+  if (sources.length > MAX_SOURCES) parsed.dropped = sources.length - MAX_SOURCES;
   if (sources.length === 1 && indexes[0] && indexes[0] > 1) parsed.startIndex = indexes[0];
   return parsed;
 }
