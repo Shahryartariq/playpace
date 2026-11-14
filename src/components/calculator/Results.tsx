@@ -149,10 +149,11 @@ export function Results(props: Props) {
 
       <Timeline ui={ui} f={f} items={counted} total={totals.seconds} speed={speed} />
 
-      <TimeFit t={ui.fit} units={ui.units} tag={f.tag} seconds={totals.seconds} speed={speed} onApply={onSpeed} />
-
       <div className="results__grid">
-        <SpeedTable ui={ui} f={f} seconds={totals.seconds} speed={speed} onSpeed={onSpeed} />
+        <div className="results__col">
+          <TimeFit t={ui.fit} units={ui.units} tag={f.tag} seconds={totals.seconds} speed={speed} onApply={onSpeed} />
+          <SpeedTable ui={ui} f={f} seconds={totals.seconds} speed={speed} onSpeed={onSpeed} />
+        </div>
         <Planner ui={ui} f={f} items={counted} speed={speed} title={title} />
       </div>
 

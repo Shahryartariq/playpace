@@ -72,7 +72,7 @@ export function SpeedConverter({ t, fit, results, units, tag }: Props) {
               value={speed}
               onChange={(e) => setSpeed(e.target.value)}
             />
-            <span aria-hidden="true">×</span>
+            <span className="custom-speed__unit" aria-hidden="true">×</span>
           </span>
         </label>
       </form>

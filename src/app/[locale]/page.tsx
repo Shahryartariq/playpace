@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { isLocale, localeInfo, localePath, type Locale } from '@/i18n/config';
@@ -65,7 +66,7 @@ function structuredData(locale: Locale) {
         isPartOf: { '@id': `${absoluteUrl('/')}#website` },
         image: absoluteUrl(`/api/og?l=${locale}`),
         screenshot: absoluteUrl(`/api/og?l=${locale}`),
-        featureList: dict.content.features.map((feature) => feature.title),
+        featureList: dict.content.featureList,
       },
       {
         '@type': 'FAQPage',
@@ -121,38 +122,7 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[lo
         />
       </div>
 
-      <section className="container section" aria-labelledby="how-heading">
-        <h2 id="how-heading" className="section__title">
-          {dict.content.howHeading}
-        </h2>
-        <ol className="steps" role="list">
-          {dict.content.steps.map((step, i) => (
-            <li key={step.title} className="step">
-              <span className="step__n" aria-hidden="true">
-                {i + 1}
-              </span>
-              <h3 className="step__title">{step.title}</h3>
-              <p>{step.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="container section" aria-labelledby="features-heading">
-        <h2 id="features-heading" className="section__title">
-          {dict.content.featuresHeading}
-        </h2>
-        <ul className="features" role="list">
-          {dict.content.features.map((feature) => (
-            <li key={feature.title} className="feature">
-              <h3 className="feature__title">{feature.title}</h3>
-              <p>{feature.text}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="container section" aria-labelledby="reference-heading">
+      <section className="container section section--deferred" aria-labelledby="reference-heading">
         <h2 id="reference-heading" className="section__title">
           {dict.content.referenceHeading}
         </h2>
@@ -181,9 +151,12 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[lo
             </tbody>
           </table>
         </div>
+        <p className="cross-link">
+          {dict.content.toSpeed} <Link href={localePath(locale, '/speed-calculator')}>{dict.speedPage.h1}</Link>
+        </p>
       </section>
 
-      <section className="container section" aria-labelledby="faq-heading">
+      <section className="container section section--deferred" aria-labelledby="faq-heading">
         <h2 id="faq-heading" className="section__title">
           {dict.content.faqHeading}
         </h2>

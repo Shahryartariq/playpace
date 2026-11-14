@@ -97,7 +97,7 @@ const id: Dictionary = {
     speedCol: 'Kecepatan',
     timeCol: 'Waktu',
     savedCol: 'Waktu hemat',
-    timelineLabel: 'Setiap blok adalah satu video, ukurannya sesuai durasi. Blok terang ikut dihitung; strip ini makin pendek saat kecepatan dinaikkan.',
+    timelineLabel: 'Satu blok untuk tiap video, sesuai durasinya.',
     by: 'oleh {channel}',
     channelUploads: 'Semua upload',
     openOnYouTube: 'Buka di YouTube',
@@ -184,35 +184,20 @@ const id: Dictionary = {
     days: { other: '{n} hari' },
   },
   content: {
-    howHeading: 'Cara mengetahui durasi playlist',
-    steps: [
-      {
-        title: 'Salin link-nya',
-        text: 'Buka playlist di YouTube dan salin alamatnya, atau ketuk Bagikan lalu Salin link di aplikasi. Link video, channel, dan YouTube Music juga bisa.',
-      },
-      {
-        title: 'Tempel dan pilih',
-        text: 'Tempel di kolom di atas. Hitung seluruh daftar, rentang seperti video 10 sampai 40, atau semua video mulai dari yang sedang Anda tonton. Pilih kecepatan putar.',
-      },
-      {
-        title: 'Buat jadwal',
-        text: 'Lihat totalnya, bandingkan di setiap kecepatan, bagi menjadi beberapa hari sesuai jadwal Anda, dan tambahkan hari-hari itu ke kalender.',
-      },
-    ],
-    featuresHeading: 'Semua yang bisa Anda lakukan',
-    features: [
-      { title: 'Jumlahkan beberapa daftar', text: 'Tempel hingga sepuluh playlist, video, atau channel dan dapatkan satu total, dengan nomor urut.' },
-      { title: 'Hitung sebagian daftar', text: 'Pilih rentang, atau mulai dari video mana pun untuk melihat sisa durasinya.' },
-      { title: 'Kecepatan apa pun', text: 'Lihat semua kecepatan umum sekaligus, atau ketik kecepatan apa pun dari 0,25× sampai 16×.' },
-      { title: 'Jadwal harian', text: 'Tentukan menit per hari, lewati akhir pekan jika mau, dan dapatkan tanggal selesai beserta daftar video untuk setiap hari.' },
-      { title: 'File kalender', text: 'Unduh jadwal Anda sebagai file .ics untuk Google Kalender, Apple Calendar, atau Outlook.' },
-      { title: 'Daftar tontonan', text: 'Centang video yang sudah ditonton. Progres Anda tersimpan di browser ini, tanpa akun.' },
-      { title: 'Satu channel penuh', text: 'Tempel link channel untuk menjumlahkan semua upload-nya, hingga 5.000 video.' },
-      { title: 'Bagikan dan ekspor', text: 'Kirim link yang membuka kembali hasil Anda, atau unduh semua video sebagai CSV untuk Excel atau Sheets.' },
+    featureList: [
+      'Jumlahkan beberapa daftar',
+      'Hitung sebagian daftar',
+      'Kecepatan apa pun',
+      'Jadwal harian',
+      'File kalender',
+      'Daftar tontonan',
+      'Satu channel penuh',
+      'Bagikan dan ekspor',
     ],
     referenceHeading: 'Contekan kecepatan putar',
     referenceIntro: 'Berapa lama durasi umum jika diputar lebih cepat. Bagi durasi dengan kecepatannya: 10 jam pada 2× menjadi 5 jam.',
     referenceLength: 'Pada 1×',
+    toSpeed: 'Hanya satu video?',
     faqHeading: 'Pertanyaan',
     faq: [
       {
@@ -327,7 +312,7 @@ const id: Dictionary = {
     ],
   },
   footer: {
-    tagline: 'Kalkulator durasi playlist YouTube gratis. Tanpa daftar, tanpa batas.',
+    tagline: 'Kalkulator durasi playlist YouTube gratis.',
     madeBy: 'Dibuat oleh {name}',
     source: 'Kode sumber',
     apiNote: 'Playpace menggunakan Layanan API YouTube dan tidak berafiliasi dengan atau didukung oleh YouTube maupun Google.',

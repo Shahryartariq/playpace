@@ -38,9 +38,9 @@ export function generateStaticParams() {
 const LATIN_FONT = '/fonts/onest-latin-var.woff2';
 const SCRIPT_FONT: Partial<Record<string, string>> = {
   ru: '/fonts/onest-cyrillic-var.woff2',
-  ur: '/fonts/noto-nastaliq-urdu-400.woff2',
-  ar: '/fonts/noto-sans-arabic-var.woff2',
-  hi: '/fonts/noto-sans-devanagari-var.woff2',
+  ur: '/fonts/noto-nastaliq-urdu-400-sub.woff2',
+  ar: '/fonts/noto-sans-arabic-var-sub.woff2',
+  hi: '/fonts/noto-sans-devanagari-var-sub.woff2',
 };
 
 /** Applies the saved theme before the first paint so dark mode never flashes light. */

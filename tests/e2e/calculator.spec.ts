@@ -221,8 +221,7 @@ test('Urdu is right to left and fully translated', async ({ page }) => {
   await expect(page.locator('.summary__time')).toContainText('گھنٹے');
 });
 
-test('language links follow in-app navigation to the same page', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'The speed calculator link is in the footer on small screens; covered on desktop.');
+test('language links follow in-app navigation to the same page', async ({ page }) => {
   await page.goto('/');
   await page.locator('.site-header').getByRole('link', { name: 'Speed calculator' }).click();
   await expect(page).toHaveURL(/\/speed-calculator$/);
@@ -269,4 +268,56 @@ test('the links box centres its placeholder and the speed rows have room', async
 
   const rowGap = await page.locator('.speed-chips').first().evaluate((el) => parseFloat(getComputedStyle(el).rowGap));
   expect(rowGap).toBeGreaterThanOrEqual(12);
+});
+
+test('nothing is wider than the screen, before or after results', async ({ page }) => {
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  for (const path of ['/', '/speed-calculator', '/ur', '/privacy']) {
+    await page.goto(path);
+    expect(await overflow(), path).toBeLessThanOrEqual(0);
+  }
+  await page.goto('/');
+  await calculate(page, COURSE);
+  // Recent lookups have a long title; it must shorten, not stretch the form.
+  await page.goto('/');
+  await expect(page.locator('.recent__item').first()).toBeVisible();
+  expect(await overflow()).toBeLessThanOrEqual(0);
+});
+
+test('typed numbers are dark and bold, not grey like the hint text', async ({ page }) => {
+  await page.goto('/speed-calculator');
+  const hours = page.locator('.converter__form').getByLabel('Hours', { exact: true });
+  await expect(hours).toHaveValue('1');
+  const style = await hours.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { color: cs.color, weight: Number(cs.fontWeight), bg: cs.backgroundColor };
+  });
+  expect(style.color).toBe('rgb(18, 20, 43)');
+  expect(style.weight).toBeGreaterThanOrEqual(600);
+  expect(style.bg).toBe('rgb(255, 255, 255)');
+});
+
+test('the results page reads well on any screen', async ({ page, isMobile }) => {
+  await page.goto('/');
+  await calculate(page, COURSE);
+
+  // The planner's deadline sits next to the start date, before the list of days.
+  const deadline = page.locator('.planner').getByLabel('Or finish by');
+  const firstDay = page.locator('.plan-day').first();
+  expect((await deadline.boundingBox())!.y).toBeLessThan((await firstDay.boundingBox())!.y);
+
+  // "How much time do you have?" sits with the speed table.
+  await expect(page.locator('.results__col .time-fit')).toHaveCount(1);
+  await expect(page.locator('.results__col .speed-table')).toHaveCount(1);
+
+  const firstTitle = page.locator('.video-row__title').first();
+  if (isMobile) {
+    // Phones drop the thumbnail so a title gets most of the row.
+    await expect(page.locator('.video-row__thumb').first()).toBeHidden();
+    const row = (await page.locator('.video-row').first().boundingBox())!;
+    expect((await firstTitle.boundingBox())!.width).toBeGreaterThan(row.width * 0.45);
+  } else {
+    // Desktop labels the columns, including when each video is done.
+    await expect(page.locator('.video-rows__head')).toContainText('Done after');
+  }
 });

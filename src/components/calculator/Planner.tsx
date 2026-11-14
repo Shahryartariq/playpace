@@ -154,17 +154,33 @@ export function Planner({ ui, f, items, speed, title }: Props) {
           <span className="field__label">{ui.planner.startDate}</span>
           <input type="date" className="date-input" value={start} onChange={(e) => setStart(e.target.value)} required />
         </label>
+        <label className="field field--inline">
+          <span className="field__label">{ui.planner.deadlineLabel}</span>
+          <input type="date" className="date-input" value={deadline} min={start} onChange={(e) => setDeadline(e.target.value)} />
+        </label>
         <label className="check">
           <input type="checkbox" checked={weekdays} onChange={(e) => setWeekdays(e.target.checked)} />
           <span>{ui.planner.weekdays}</span>
         </label>
       </div>
 
-      {last ? (
-        <p className="planner__answer">
-          {fill(ui.planner.finish, { days: f.count(ui.plurals.days, days.length), date: f.dateLong(last.date) })}
-        </p>
-      ) : null}
+      <div className="planner__answers" aria-live="polite">
+        {last ? (
+          <p className="planner__answer">
+            {fill(ui.planner.finish, { days: f.count(ui.plurals.days, days.length), date: f.dateLong(last.date) })}
+          </p>
+        ) : null}
+        {deadlineDate ? (
+          <p className="planner__answer planner__answer--deadline">
+            {studyDays > 0
+              ? fill(ui.planner.deadlineResult, {
+                  time: f.dur(minutesPerDayFor(totalSeconds, speed, studyDays) * 60, false),
+                  date: f.dateLong(deadlineDate),
+                })
+              : ui.planner.deadlinePast}
+          </p>
+        ) : null}
+      </div>
 
       <ol className="plan-days" role="list">
         {shown.map((day) => (
@@ -179,27 +195,10 @@ export function Planner({ ui, f, items, speed, title }: Props) {
         ))}
       </ol>
       {days.length > SHOWN ? (
-        <button type="button" className="text-button" onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
+        <button type="button" className="text-button planner__more" onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
           {showAll ? ui.planner.showFewer : fill(ui.planner.showAll, { n: f.int(days.length) })}
         </button>
       ) : null}
-
-      <div className="planner__deadline">
-        <label className="field field--inline">
-          <span className="field__label">{ui.planner.deadlineLabel}</span>
-          <input type="date" className="date-input" value={deadline} min={start} onChange={(e) => setDeadline(e.target.value)} />
-        </label>
-        {deadlineDate ? (
-          <p className="planner__answer" aria-live="polite">
-            {studyDays > 0
-              ? fill(ui.planner.deadlineResult, {
-                  time: f.dur(minutesPerDayFor(totalSeconds, speed, studyDays) * 60, false),
-                  date: f.dateLong(deadlineDate),
-                })
-              : ui.planner.deadlinePast}
-          </p>
-        ) : null}
-      </div>
 
       <button type="button" className="button button--secondary" onClick={exportCalendar}>
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
