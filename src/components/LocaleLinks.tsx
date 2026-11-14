@@ -20,14 +20,34 @@ interface ListProps {
   itemClassName?: string;
 }
 
+/**
+ * On the home page, a calculation lives in the address (?q=…). Carry it to the other language at the
+ * moment the link is used, so switching language keeps the result instead of opening an empty page.
+ */
+function keepCalculation(page: string) {
+  return (event: React.SyntheticEvent<HTMLAnchorElement>) => {
+    if (page !== '/') return;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('q')) return;
+    const link = event.currentTarget;
+    const url = new URL(link.href);
+    url.search = params.toString();
+    link.href = url.toString();
+  };
+}
+
 /** Links to this page in every language. Plain <a> so the page reloads with the right <html lang> and direction. */
 export function LocaleList({ current, fallbackPath, itemClassName }: ListProps) {
   const page = useSamePage(fallbackPath);
+  const carry = keepCalculation(page);
   return (
     <>
       {locales.map((l) => (
         <li key={l}>
           <a
+            onClick={carry}
+            onPointerDown={carry}
+            onFocus={carry}
             href={localePath(l, page)}
             hrefLang={localeInfo[l].tag}
             lang={localeInfo[l].tag}

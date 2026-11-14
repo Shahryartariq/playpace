@@ -20,7 +20,7 @@
     "check": "npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
-    "@vercel/functions": "^3.11.1",
+    "@vercel/functions": "^3.11.3",
     "next": "16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -28,14 +28,15 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
-    "@playwright/test": "^1.65.0",
-    "@types/node": "^22",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
     "typescript": "5.9.3",
-    "vitest": "^4.1.12"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "type": "module"
 }

@@ -7,7 +7,7 @@ Playpace reads public playlists through the YouTube Data API and adds up every v
 ## Tools
 
 - [YouTube playlist length calculator](https://getplaypace.vercel.app): total length of up to 10 playlists, videos or channels at once (up to 5,000 videos each); time at 1.25×, 1.5×, 1.75×, 2× or any speed from 0.25× to 16×; count a range or start from any video; daily watching plan with a finish date and a calendar (.ics) file; watched list saved in the browser; CSV export and share links.
-- [Video speed calculator](https://getplaypace.vercel.app/speed-calculator): how long one video takes at every speed, and which speed fits it into the time you have.
+- [Video speed calculator](https://getplaypace.vercel.app/speed-calculator): paste a video link or type its length to see how long it takes at every speed, and which speed fits it into the time you have.
 
 ## Facts
 

@@ -59,3 +59,12 @@ describe('loadList', () => {
     await expect(loadList({ kind: 'playlist', id: 'PLnoKeyList0000000001' })).rejects.toMatchObject({ code: 'config' });
   });
 });
+
+describe('clientIp', () => {
+  it("prefers Vercel's own header over ones a client could send elsewhere", () => {
+    expect(
+      clientIp(new Headers({ 'x-vercel-forwarded-for': '198.51.100.7', 'x-real-ip': '10.0.0.1', 'x-forwarded-for': '6.6.6.6' })),
+    ).toBe('198.51.100.7');
+    expect(clientIp(new Headers({}))).toBe('unknown');
+  });
+});

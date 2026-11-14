@@ -1769,6 +1769,37 @@ html:is([lang='hi'], [lang='ur'], [lang='ar'], [lang='ja']) .section__title {
     padding: 32px 36px;
   }
 }
+.converter__link {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+.converter__link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.converter__link .text-input {
+  flex: 1 1 260px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+}
+.converter__link .text-input::placeholder {
+  color: var(--ink-3);
+}
+.converter__link .text-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.converter__link .text-input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
 .converter__form {
   display: flex;
   flex-wrap: wrap;
